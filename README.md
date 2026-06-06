@@ -7,8 +7,8 @@ An AI-assisted homestay booking and travel planning platform designed to help tr
 - Frontend: React.js
 - Styling: Tailwind CSS
 - Backend: Express.js
-- Database: MongoDB Atlas
-- AI: Gemini API
+- Database: MongoDB
+- AI: LLM API (planned)
 - Authentication: JWT
 - Deployment: Vercel + Render
 

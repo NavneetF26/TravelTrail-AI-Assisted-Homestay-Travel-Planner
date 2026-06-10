@@ -1,6 +1,6 @@
-# TravelNest AI
+# TravelTrail: AI-Assisted Homestay & Travel Planner
 
-An AI-assisted homestay booking and travel planning platform designed to help travelers discover accommodations, submit booking requests, and receive personalized travel guidance.
+An AI-assisted homestay booking and travel planning platform designed to help travelers explore homestay information, check room availability, submit booking requests, and plan their trips more conveniently.
 
 ## Tech Stack
 
@@ -8,9 +8,6 @@ An AI-assisted homestay booking and travel planning platform designed to help tr
 - Styling: Tailwind CSS
 - Backend: Express.js
 - Database: MongoDB
-- AI: LLM API (planned)
-- Authentication: JWT
-- Deployment: Vercel + Render
 
 ## Setup
 

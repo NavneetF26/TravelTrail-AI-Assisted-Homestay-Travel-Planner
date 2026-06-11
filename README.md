@@ -6,7 +6,7 @@ An AI-assisted homestay booking and travel planning platform designed to help tr
 
 - Frontend: React.js
 - Styling: Tailwind CSS
-- Backend: Express.js
+- Backend: Python/FastAPI
 - Database: MongoDB
 
 ## Features

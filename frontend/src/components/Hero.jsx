@@ -20,7 +20,7 @@ function Hero() {
 
         {/* SUBHEADING */}
         <p className="text-gray-200 mt-4 text-base md:text-lg max-w-2xl">
-          Experience a peaceful stay in the Himalayas. Explore our homestay,
+          Experience a peaceful stay in the Himalayas. Explore homestay,
           check availability, and plan your perfect mountain escape.
         </p>
 

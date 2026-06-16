@@ -12,14 +12,13 @@ function Hero() {
       {/* DARK OVERLAY */}
       <div className="absolute inset-0 bg-black/40"></div>
 
-      {/* CONTENT ON TOP */}
       <div className="relative z-10 flex flex-col items-center justify-center text-center h-full px-6">
         {/* MAIN HEADING */}
         <h1 className="text-white text-3xl md:text-5xl font-bold leading-tight">
           TravelTrail: AI-Assisted Homestay & Travel Planner
         </h1>
 
-        {/* COMBINED TEXT */}
+        {/* SUBHEADING */}
         <p className="text-gray-200 mt-4 text-base md:text-lg max-w-2xl">
           Experience a peaceful stay in the Himalayas. Explore our homestay,
           check availability, and plan your perfect mountain escape.

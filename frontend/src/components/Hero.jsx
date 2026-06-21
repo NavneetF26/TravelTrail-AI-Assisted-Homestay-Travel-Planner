@@ -1,4 +1,6 @@
 import hero from "../assets/hero.png";
+import { Link } from "react-router-dom";
+import { Button } from "../components/ui";
 
 function Hero() {
   return (
@@ -9,25 +11,31 @@ function Hero() {
         className="absolute inset-0 w-full h-full object-cover"
       />
 
-      {/* DARK OVERLAY */}
-      <div className="absolute inset-0 bg-black/40"></div>
+      <div className="absolute inset-0 bg-black/45"></div>
 
-      {/* CONTENT ON TOP */}
       <div className="relative z-10 flex flex-col items-center justify-center text-center h-full px-6">
-        {/* MAIN HEADING */}
         <h1 className="text-white text-3xl md:text-5xl font-bold leading-tight">
-          TravelTrail: AI-Assisted Homestay & Travel Planner
+          Discover Beautiful Homestays with AI Travel Planning
         </h1>
 
-        {/* COMBINED TEXT */}
-        <p className="text-gray-200 mt-4 text-base md:text-lg max-w-2xl">
-          Experience a peaceful stay in the Himalayas. Explore our homestay,
-          check availability, and plan your perfect mountain escape.
+        <p className="text-gray-200 mt-5 text-base md:text-lg max-w-2xl">
+          Explore unique stays, compare amenities, send booking requests, and
+          receive personalized travel itineraries powered by AI.
         </p>
 
-        <button className="mt-6 bg-green-400 hover:bg-amber-800 hover:text-white text-black font-bold px-6 py-3 rounded-full transition">
-          Book Your Stay
-        </button>
+        <div className="flex flex-wrap justify-center gap-4 mt-8">
+          <Link to="/explore">
+            <Button variant="primary" size="lg">
+              Explore Homestays
+            </Button>
+          </Link>
+
+          <Link to="/travelplanner">
+            <Button variant="secondary" size="lg">
+              Plan My Trip
+            </Button>
+          </Link>
+        </div>
       </div>
     </section>
   );

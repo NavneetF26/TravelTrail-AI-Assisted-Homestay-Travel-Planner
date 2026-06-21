@@ -1,27 +1,38 @@
+import { Routes, Route } from "react-router-dom";
+
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+
 import Home from "./pages/Home";
-import About from "./pages/About";
-import Rooms from "./pages/Rooms";
-import Contact from "./pages/Contact";
-import { Routes, Route } from "react-router-dom";
+import Explore from "./pages/Explore";
+import HomestayDetails from "./pages/HomestayDetails";
+import Booking from "./pages/Booking";
+import TravelPlanner from "./pages/TravelPlanner";
+import Dashboard from "./pages/Dashboard";
+import Login from "./pages/Login";
+import Settings from "./pages/Settings";
+
 function App() {
   return (
-    <div className="bg-sky-50 min-h-screen flex flex-col">
-      {" "}
-      <Navbar />{" "}
-      <div className="flex-1">
-        {" "}
+    <div className="min-h-screen flex flex-col bg-teal-50 dark:bg-slate-900 transition-colors duration-300">
+      <Navbar />
+
+      <main className="flex-1">
         <Routes>
-          {" "}
-          <Route path="/" element={<Home />} />{" "}
-          <Route path="/about" element={<About />} />{" "}
-          <Route path="/rooms" element={<Rooms />} />{" "}
-          <Route path="/contact" element={<Contact />} />{" "}
-        </Routes>{" "}
-      </div>{" "}
-      <Footer />{" "}
+          <Route path="/" element={<Home />} />
+          <Route path="/explore" element={<Explore />} />
+          <Route path="/homestay/:id" element={<HomestayDetails />} />
+          <Route path="/booking" element={<Booking />} />
+          <Route path="/travelplanner" element={<TravelPlanner />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/settings" element={<Settings />} />
+        </Routes>
+      </main>
+
+      <Footer />
     </div>
   );
 }
+
 export default App;

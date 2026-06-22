@@ -11,6 +11,7 @@ import TravelPlanner from "./pages/TravelPlanner";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Settings from "./pages/Settings";
+import UIShowcase from "./pages/UIShowcase";
 
 function App() {
   return (
@@ -27,6 +28,8 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/login" element={<Login />} />
           <Route path="/settings" element={<Settings />} />
+
+          <Route path="/uishowcase" element={<UIShowcase />} />
         </Routes>
       </main>
 

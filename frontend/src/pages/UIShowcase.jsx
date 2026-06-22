@@ -1,3 +1,19 @@
+/*
+UI COMPONENT SHOWCASE
+
+Run the application and visit:
+http://localhost:5173/UIShowcase
+
+This page demonstrates:
+- Buttons
+- Inputs
+- Loader
+- Toast notifications
+- Responsive design
+- Light/Dark mode support
+
+Created for Week 3 deliverables.
+*/
 import { useState } from "react";
 
 import { Button, Input, Modal, Toast, Loader } from "../components/ui";

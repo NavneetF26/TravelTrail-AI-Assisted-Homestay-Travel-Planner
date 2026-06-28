@@ -48,7 +48,7 @@ function TravelPlanner() {
         </div>
 
         {/* RIGHT: OUTPUT PANEL */}
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-6 min-h-[300px]">
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-6 min-h-75">
           <h2 className="text-xl font-semibold text-violet-800 mb-4 dark:text-violet-400">
             Your Travel Plan
           </h2>

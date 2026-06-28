@@ -18,12 +18,11 @@ function Hero() {
           Discover Beautiful Homestays with AI Travel Planning
         </h1>
 
-<p className="text-gray-200 mt-4 text-base md:text-lg max-w-2xl">
-  Explore unique stays, compare amenities, send booking requests, and
-  receive personalized travel itineraries powered by AI. Experience a
-  peaceful stay in the Himalayas and discover homestays that match your
-  preferences with real-time availability.
-</p>
+        <p className="text-gray-200 mt-4 text-base md:text-lg max-w-2xl">
+          Explore unique stays, compare amenities, send booking requests, and
+          receive personalized travel itineraries powered by AI. Experience a
+          peaceful stay in the Himalayas and discover homestays that match your
+          preferences with real-time availability.
         </p>
 
         <div className="flex flex-wrap justify-center gap-4 mt-8">

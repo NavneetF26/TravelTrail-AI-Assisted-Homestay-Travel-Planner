@@ -30,6 +30,7 @@ function Toast({ message, variant = "success", onClose }) {
       className={`
         fixed top-5 right-5
         flex items-center gap-4
+        z-9999
         px-4 py-3
         rounded-lg
         text-white

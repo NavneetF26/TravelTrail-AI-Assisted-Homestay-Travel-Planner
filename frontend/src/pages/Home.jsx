@@ -1,58 +1,10 @@
 import Hero from "../components/Hero";
-import Card from "../components/Card";
-import { Button } from "../components/ui";
 import { ShieldCheck, CalendarCheck, Bot, Headset } from "lucide-react";
-import { Link } from "react-router-dom";
 
 function Home() {
   return (
     <>
       <Hero />
-      {/* Featured Homestays */}
-      <section className="py-16 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-10">
-            <h2 className="text-3xl md:text-4xl font-bold text-teal-900 dark:text-teal-200">
-              Featured Homestays
-            </h2>
-            <Link to="/explore">
-              <Button variant="outline">View All</Button>
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 justify-items-center">
-            <Card
-              id={1}
-              image="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80"
-              name="Mountain View Cottage"
-              location="Mussoorie"
-              rating="4.8"
-              price="2500"
-              buttonText="View Details"
-            />
-
-            <Card
-              id={2}
-              image="https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=80"
-              name="Riverside Retreat"
-              location="Rishikesh"
-              rating="4.7"
-              price="2200"
-              buttonText="View Details"
-            />
-
-            <Card
-              id={3}
-              image="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=800&q=80"
-              name="Village Heritage Stay"
-              location="Dehradun"
-              rating="4.9"
-              price="2800"
-              buttonText="View Details"
-            />
-          </div>
-        </div>
-      </section>
 
       {/* Why Choose TravelTrail */}
       <section className="bg-teal-100 py-16 px-6 dark:bg-slate-800">

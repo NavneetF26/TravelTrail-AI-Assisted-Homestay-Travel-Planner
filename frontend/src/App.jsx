@@ -23,12 +23,12 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/homestay/:id" element={<HomestayDetails />} />
-          <Route path="/booking" element={<Booking />} />
+          <Route path="/booking/:id" element={<Booking />} />
+          <Route path="/booking/edit/:id" element={<Booking />} />
           <Route path="/travelplanner" element={<TravelPlanner />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/login" element={<Login />} />
           <Route path="/settings" element={<Settings />} />
-
           <Route path="/uishowcase" element={<UIShowcase />} />
         </Routes>
       </main>

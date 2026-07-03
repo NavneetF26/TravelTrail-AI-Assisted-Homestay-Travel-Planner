@@ -1,6 +1,5 @@
 from fastapi import APIRouter, HTTPException
-
-from app.data.mock_data import homestays
+from app.database import homestays_collection
 
 router = APIRouter(
     prefix="/api/homestays",
@@ -8,9 +7,20 @@ router = APIRouter(
 )
 
 
+def serialize_homestay(homestay):
+    homestay = homestay.copy()
+    if "_id" in homestay:
+        homestay["_id"] = str(homestay["_id"])
+    return homestay
+
+
 @router.get("/")
 def get_homestays():
-    return homestays
+    homestays = list(homestays_collection.find())
+    return [
+        serialize_homestay(homestay)
+        for homestay in homestays
+    ]
 
 
 @router.get("/search")
@@ -19,7 +29,7 @@ def search_homestays(
     location: str = "",
     budget: str = ""
 ):
-    results = homestays
+    results = list(homestays_collection.find())
 
     if q:
         results = [
@@ -54,25 +64,20 @@ def search_homestays(
                 if 3000 <= h["price"] <= 5000
             ]
 
-    return results
+    return [
+        serialize_homestay(homestay)
+        for homestay in results
+    ]
 
 
 @router.get("/{homestay_id}")
 def get_homestay(homestay_id: int):
-
-    homestay = next(
-        (
-            h
-            for h in homestays
-            if h["id"] == homestay_id
-        ),
-        None,
+    homestay = homestays_collection.find_one(
+        {"id": homestay_id}
     )
-
     if not homestay:
         raise HTTPException(
             status_code=404,
             detail="Homestay not found",
         )
-
-    return homestay
+    return serialize_homestay(homestay)

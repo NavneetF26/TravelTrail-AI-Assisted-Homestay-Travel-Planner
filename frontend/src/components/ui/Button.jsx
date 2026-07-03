@@ -22,7 +22,7 @@ function Button({
     secondary:
       "bg-violet-500 text-white hover:bg-violet-700 dark:bg-violet-600 dark:hover:bg-violet-700",
     outline:
-      "border border-sky-600 text-sky-600 hover:bg-sky-100 dark:border-sky-300 dark:text-sky-300 dark:hover:bg-gray-800 dark:hover:text-sky-100",
+      "border border-sky-600 text-sky-700 hover:bg-sky-100 dark:border-sky-300 dark:text-sky-300 dark:hover:bg-gray-800 dark:hover:text-sky-100",
   };
 
   const sizes = {

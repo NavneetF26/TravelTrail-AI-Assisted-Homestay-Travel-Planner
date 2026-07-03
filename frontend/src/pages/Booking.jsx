@@ -2,6 +2,39 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { Input, Button, Toast, Loader } from "../components/ui";
 
+const API = "http://127.0.0.1:8000/api";
+
+const FIELD_GROUPS = [
+  [
+    {
+      name: "full_name",
+      label: "Full Name",
+      placeholder: "Enter your full name",
+    },
+  ],
+  [
+    {
+      name: "email",
+      label: "Email",
+      type: "email",
+      placeholder: "you@example.com",
+    },
+    { name: "phone", label: "Phone", placeholder: "10-digit phone number" },
+  ],
+  [
+    { name: "check_in", label: "Check-in", type: "date" },
+    { name: "check_out", label: "Check-out", type: "date" },
+  ],
+  [
+    {
+      name: "guests",
+      label: "Guests",
+      type: "number",
+      placeholder: "Number of guests",
+    },
+  ],
+];
+
 function Booking() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -36,23 +69,18 @@ function Booking() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const loadData = async () => {
+  async function loadData() {
     try {
       setLoading(true);
       let homestayId = id;
       let prefill = { room_id: location.state?.roomId };
 
       if (editMode) {
-        const booking = await (
-          await fetch(`http://127.0.0.1:8000/api/bookings/${id}`)
-        ).json();
-        homestayId = booking.homestay_id;
-        prefill = booking;
+        prefill = await (await fetch(`${API}/bookings/${id}`)).json();
+        homestayId = prefill.homestay_id;
       }
 
-      const home = await (
-        await fetch(`http://127.0.0.1:8000/api/homestays/${homestayId}`)
-      ).json();
+      const home = await (await fetch(`${API}/homestays/${homestayId}`)).json();
       setHomestay(home);
       setForm((p) => ({
         ...p,
@@ -69,20 +97,37 @@ function Booking() {
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   const change = (field) => (e) =>
     setForm({ ...form, [field]: e.target.value });
 
-  const validate = () => {
+  function validate(room) {
     const err = {};
-    for (const k in form) if (!form[k]) err[k] = "Required";
-    setErrors(err);
-    return !Object.keys(err).length;
-  };
+    const today = new Date().toISOString().split("T")[0];
 
-  const submit = async () => {
-    if (!validate()) return;
+    for (const k in form) if (!form[k]) err[k] = "Required";
+    if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
+      err.email = "Enter a valid email address";
+    if (form.phone && !/^\d{10}$/.test(form.phone))
+      err.phone = "Phone number must be exactly 10 digits";
+    if (form.check_in && form.check_in < today)
+      err.check_in = "Check-in cannot be before today";
+    if (form.check_in && form.check_out && form.check_out <= form.check_in)
+      err.check_out = "Check-out must be after check-in";
+    if (room && form.guests && Number(form.guests) > room.capacity)
+      err.guests = `Maximum ${room.capacity} guests allowed`;
+
+    setErrors(err);
+    if (Object.keys(err).length) {
+      showToast(Object.values(err)[0], "error");
+      return false;
+    }
+    return true;
+  }
+
+  async function submit(room) {
+    if (!validate(room)) return;
     const body = {
       ...form,
       homestay_id: homestay.id,
@@ -93,26 +138,35 @@ function Booking() {
     try {
       setSubmitting(true);
       const res = await fetch(
-        editMode
-          ? `http://127.0.0.1:8000/api/bookings/${id}`
-          : "http://127.0.0.1:8000/api/bookings/",
+        editMode ? `${API}/bookings/${id}` : `${API}/bookings/`,
         {
           method: editMode ? "PUT" : "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
         },
       );
-      if (!res.ok) throw new Error();
+      const data = await res.json();
+
+      if (!res.ok) {
+        const message = Array.isArray(data.detail)
+          ? data.detail[0].msg
+          : data.detail || "Something went wrong.";
+        showToast(message, "error");
+        return;
+      }
+
       showToast(
-        editMode ? "Booking updated successfully" : "Booking submitted",
+        editMode
+          ? "Booking updated successfully"
+          : "Booking submitted successfully",
       );
       setTimeout(() => navigate("/dashboard"), 1000);
     } catch {
-      showToast(editMode ? "Update failed" : "Booking failed", "error");
+      showToast("Unable to connect to the server.", "error");
     } finally {
       setSubmitting(false);
     }
-  };
+  }
 
   if (loading) return <Loader text="Loading..." />;
   if (!homestay) return <p className="text-red-500">Homestay not found</p>;
@@ -151,57 +205,24 @@ function Booking() {
 
         <div className="bg-white dark:bg-slate-700 rounded-2xl shadow p-8">
           <div className="space-y-5">
-            <Input
-              label="Full Name"
-              placeholder="Enter your full name"
-              value={form.full_name}
-              onChange={change("full_name")}
-              error={errors.full_name}
-            />
-
-            <div className="grid md:grid-cols-2 gap-5">
-              <Input
-                label="Email"
-                type="email"
-                placeholder="you@example.com"
-                value={form.email}
-                onChange={change("email")}
-                error={errors.email}
-              />
-              <Input
-                label="Phone"
-                placeholder="10-digit phone number"
-                value={form.phone}
-                onChange={change("phone")}
-                error={errors.phone}
-              />
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-5">
-              <Input
-                label="Check-in"
-                type="date"
-                value={form.check_in}
-                onChange={change("check_in")}
-                error={errors.check_in}
-              />
-              <Input
-                label="Check-out"
-                type="date"
-                value={form.check_out}
-                onChange={change("check_out")}
-                error={errors.check_out}
-              />
-            </div>
-
-            <Input
-              label="Guests"
-              type="number"
-              placeholder="Number of guests"
-              value={form.guests}
-              onChange={change("guests")}
-              error={errors.guests}
-            />
+            {FIELD_GROUPS.map((group, i) => (
+              <div
+                key={i}
+                className={group.length > 1 ? "grid md:grid-cols-2 gap-5" : ""}
+              >
+                {group.map((f) => (
+                  <Input
+                    key={f.name}
+                    label={f.label}
+                    type={f.type}
+                    placeholder={f.placeholder}
+                    value={form[f.name]}
+                    onChange={change(f.name)}
+                    error={errors[f.name]}
+                  />
+                ))}
+              </div>
+            ))}
 
             <div className="flex justify-end gap-3 pt-4">
               <Button
@@ -211,7 +232,7 @@ function Booking() {
               >
                 Cancel
               </Button>
-              <Button disabled={submitting} onClick={submit}>
+              <Button disabled={submitting} onClick={() => submit(room)}>
                 {submitting
                   ? "Saving..."
                   : editMode

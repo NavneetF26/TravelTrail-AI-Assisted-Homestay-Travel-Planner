@@ -73,15 +73,17 @@ function Modal({ isOpen, onClose, title, children }) {
         ref={modalRef}
         tabIndex={-1}
         onClick={(e) => e.stopPropagation()}
-        className="bg-sky-50 p-6 rounded-lg w-96 shadow-lg"
+        className="bg-sky-50 dark:bg-gray-700 p-6 rounded-lg w-96 shadow-lg"
       >
-        <h2 className="text-xl font-bold mb-4 text-black">{title}</h2>
+        <h2 className="text-xl font-bold mb-4 text-black dark:text-teal-300">
+          {title}
+        </h2>
 
         {children}
 
         <button
           onClick={onClose}
-          className="mt-6 bg-red-700 text-white px-4 py-2 rounded-lg hover:bg-red-800 transition"
+          className="mt-6 bg-red-700 text-white px-4 py-2 rounded-lg hover:bg-red-800 transition dark:bg-red-600 dark:hover:bg-red-700"
         >
           Close
         </button>

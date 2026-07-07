@@ -4,24 +4,50 @@ An AI-assisted homestay booking and travel planning platform designed to help tr
 
 ---
 
+## Features
+
+- Browse available homestays
+- View detailed homestay information
+- Search homestays by name, location, and budget
+- View available rooms and amenities
+- Create, update, view, and delete bookings
+- AI Travel Planner (in progress)
+
+---
+
 ## Tech Stack
 
-**Frontend**
+### Frontend
 
 - React.js
 - Tailwind CSS
 - Axios / Fetch API
 
-**Backend**
+### Backend
 
 - FastAPI (Python)
 - Uvicorn
 - Python-dotenv
 - CORS Middleware
 
-**Database**
+### Database
 
-- MongoDB (planned for Week 5 — currently using in-memory data)
+- MongoDB Atlas
+- PyMongo
+
+---
+
+## Frontend Setup (Run Locally)
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Frontend will be running at:
+
+`http://localhost:5173`
 
 ---
 
@@ -67,18 +93,68 @@ cp .env.example .env
 uvicorn app.main:app --reload
 ```
 
-Backend will be running at: `http://localhost:8000`
+Backend will be running at:
+
+`http://localhost:8000`
 
 ---
 
-## Frontend Setup (Run Locally)
+## Database
 
-```bash
-cd frontend
-npm install
-npm run dev
+TravelTrail uses **MongoDB Atlas** as its primary database.
+
+MongoDB was chosen because it stores data as flexible JSON-like documents, making it ideal for the project's nested structure where each homestay contains rooms, amenities, images, and nearby attractions inside a single document.
+
+The application currently uses two collections:
+
+- **homestays**
+- **bookings**
+
+---
+
+## Database Schema
+
+![Database Schema](docs/schema.png)
+
+---
+
+## Database Setup
+
+## 1. Create a MongoDB Atlas Cluster
+
+Create a free MongoDB Atlas cluster and obtain your connection string.
+
+---
+
+## 2. Configure Environment Variables
+
+Create a `.env` file inside the `backend` folder.
+
+Example:
+
+```env
+MONGO_URI=your_mongodb_connection_string
 ```
 
-Frontend will be running at: `http://localhost:5173`
+A sample configuration is provided in `.env.example`.
+
+---
+
+## 3. Seed the Database
+
+Run the seed script once from the backend folder to import the initial homestay data.
+
+```bash
+python scripts/seed.py
+```
+
+---
+
+## Database Collections
+
+The project currently contains two MongoDB collections:
+
+- **homestays** – Stores homestay details, rooms, amenities, images, and nearby attractions.
+- **bookings** – Stores booking details, guest information, and booking status.
 
 ---

@@ -1,9 +1,97 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Heart } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 import { Button } from "./ui";
 
+const API = "http://127.0.0.1:8000/api";
+
 function Card({ id, image, name, location, price, rating, buttonText }) {
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+
+  const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    const fetchSavedStatus = async () => {
+      if (!isAuthenticated) return;
+
+      const token = localStorage.getItem("token");
+
+      try {
+        const res = await fetch(`${API}/saved/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          setSaved(data.saved);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchSavedStatus();
+  }, [id, isAuthenticated]);
+
+  const toggleSaved = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+
+    try {
+      setSaving(true);
+
+      const res = await fetch(`${API}/saved/${id}`, {
+        method: saved ? "DELETE" : "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (res.status === 401) {
+        navigate("/login");
+        return;
+      }
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.detail);
+      }
+
+      setSaved(!saved);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg overflow-hidden w-full max-w-sm hover:-translate-y-2 hover:shadow-xl transition duration-300">
+    <div className="relative bg-white dark:bg-slate-800 rounded-2xl shadow-lg overflow-hidden w-full max-w-sm hover:-translate-y-2 hover:shadow-xl transition duration-300">
+      <button
+        onClick={toggleSaved}
+        disabled={saving}
+        className={`absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full shadow ${
+          saved
+            ? "bg-red-500 text-white"
+            : "bg-white dark:bg-slate-700 text-gray-600 dark:text-gray-300"
+        }`}
+      >
+        <Heart size={18} fill={saved ? "currentColor" : "none"} />
+      </button>
+
       <img src={image} alt={name} className="w-full h-56 object-cover" />
 
       <div className="p-5">

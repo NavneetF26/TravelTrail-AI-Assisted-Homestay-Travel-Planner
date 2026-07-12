@@ -70,18 +70,47 @@ function Booking() {
   }, []);
 
   async function loadData() {
+    // Read token/user fresh on every load, not at module scope
+    const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user") || "null");
+
     try {
       setLoading(true);
+
       let homestayId = id;
-      let prefill = { room_id: location.state?.roomId };
+
+      let prefill = {
+        room_id: location.state?.roomId,
+        full_name: user?.name || "",
+        email: user?.email || "",
+      };
 
       if (editMode) {
-        prefill = await (await fetch(`${API}/bookings/${id}`)).json();
+        const bookingRes = await fetch(`${API}/bookings/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (bookingRes.status === 401) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          navigate("/login");
+          return;
+        }
+
+        if (!bookingRes.ok) {
+          throw new Error("Unable to load booking.");
+        }
+
+        prefill = await bookingRes.json();
         homestayId = prefill.homestay_id;
       }
 
       const home = await (await fetch(`${API}/homestays/${homestayId}`)).json();
+
       setHomestay(home);
+
       setForm((p) => ({
         ...p,
         room_id: prefill.room_id || home.rooms[0].id,
@@ -128,6 +157,9 @@ function Booking() {
 
   async function submit(room) {
     if (!validate(room)) return;
+
+    const token = localStorage.getItem("token");
+
     const body = {
       ...form,
       homestay_id: homestay.id,
@@ -141,10 +173,19 @@ function Booking() {
         editMode ? `${API}/bookings/${id}` : `${API}/bookings/`,
         {
           method: editMode ? "PUT" : "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
           body: JSON.stringify(body),
         },
       );
+      if (res.status === 401) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        navigate("/login");
+        return;
+      }
       const data = await res.json();
 
       if (!res.ok) {
@@ -219,6 +260,7 @@ function Booking() {
                     value={form[f.name]}
                     onChange={change(f.name)}
                     error={errors[f.name]}
+                    disabled={f.name === "full_name" || f.name === "email"}
                   />
                 ))}
               </div>

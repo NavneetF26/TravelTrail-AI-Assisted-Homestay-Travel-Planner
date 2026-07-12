@@ -10,10 +10,23 @@ import { useEffect, useRef } from "react";
  * - onClose
  * - title
  * - children
+ * - confirmLabel  (optional, defaults to "Close") — text on the action button
+ * - onConfirm     (optional, defaults to onClose) — click handler for the action button
+ * - confirmDisabled (optional) — disables the action button, e.g. while a request is in flight
  */
 
-function Modal({ isOpen, onClose, title, children }) {
+function Modal({
+  isOpen,
+  onClose,
+  title,
+  children,
+  confirmLabel = "Close",
+  onConfirm,
+  confirmDisabled = false,
+}) {
   const modalRef = useRef(null);
+
+  const handleConfirm = onConfirm || onClose;
 
   useEffect(() => {
     if (!isOpen) return;
@@ -82,10 +95,11 @@ function Modal({ isOpen, onClose, title, children }) {
         {children}
 
         <button
-          onClick={onClose}
-          className="mt-6 bg-red-700 text-white px-4 py-2 rounded-lg hover:bg-red-800 transition dark:bg-red-600 dark:hover:bg-red-700"
+          onClick={handleConfirm}
+          disabled={confirmDisabled}
+          className="mt-6 bg-red-700 text-white px-4 py-2 rounded-lg hover:bg-red-800 transition dark:bg-red-600 dark:hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Close
+          {confirmLabel}
         </button>
       </div>
     </div>

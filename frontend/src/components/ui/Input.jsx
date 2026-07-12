@@ -8,9 +8,18 @@
  * - value
  * - onChange
  * - error
+ * - disabled
  */
 
-function Input({ label, placeholder, type = "text", value, onChange, error }) {
+function Input({
+  label,
+  placeholder,
+  type = "text",
+  value,
+  onChange,
+  error,
+  disabled = false,
+}) {
   return (
     <div className="flex flex-col gap-1">
       {label && (
@@ -24,6 +33,7 @@ function Input({ label, placeholder, type = "text", value, onChange, error }) {
         placeholder={placeholder}
         value={value}
         onChange={onChange}
+        disabled={disabled}
         className={`
           w-full
           rounded-lg
@@ -32,16 +42,20 @@ function Input({ label, placeholder, type = "text", value, onChange, error }) {
           py-2
           text-gray-900
           dark:text-gray-300
-          bg-white
-          dark:bg-slate-700
-          dark:placeholder:text-gray-400
           placeholder:text-gray-500
+          dark:placeholder:text-gray-400
           outline-none
           transition-all
           ${
+            disabled
+              ? "bg-gray-100 dark:bg-slate-600 border-gray-300 cursor-not-allowed"
+              : "bg-white dark:bg-slate-700"
+          }
+          ${
             error
               ? "border-red-700 focus:border-red-500 focus:ring-1 focus:ring-red-500"
-              : "border-gray-400 focus:border-teal-600 focus:ring-1 focus:ring-teal-600"
+              : !disabled &&
+                "border-gray-400 focus:border-teal-600 focus:ring-1 focus:ring-teal-600"
           }
         `}
       />

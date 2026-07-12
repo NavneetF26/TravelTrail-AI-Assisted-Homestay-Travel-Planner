@@ -1,36 +1,43 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { Input, Button, Toast } from "../components/ui";
-import { useAuth } from "../context/AuthContext";
 
 const API_URL = "http://127.0.0.1:8000";
 
-function Login() {
+function Register() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const [errors, setErrors] = useState({
+    name: "",
     email: "",
     password: "",
   });
+
+  const [loading, setLoading] = useState(false);
 
   const [showToast, setShowToast] = useState(false);
   const [toastType, setToastType] = useState("success");
   const [toastMessage, setToastMessage] = useState("");
 
-  const [loading, setLoading] = useState(false);
-
   const navigate = useNavigate();
-  const { login } = useAuth();
 
   const validateForm = () => {
     const newErrors = {
+      name: "",
       email: "",
       password: "",
     };
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!name.trim()) {
+      newErrors.name = "Name is required.";
+    } else if (name.trim().length < 2) {
+      newErrors.name = "Name must be at least 2 characters.";
+    }
 
     if (!email.trim()) {
       newErrors.email = "Email is required.";
@@ -38,29 +45,34 @@ function Login() {
       newErrors.email = "Please enter a valid email address.";
     }
 
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&^#()_\-+=])[A-Za-z\d@$!%*?&^#()_\-+=]{8,}$/;
+
     if (!password) {
       newErrors.password = "Password is required.";
-    } else if (password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters.";
+    } else if (!passwordRegex.test(password)) {
+      newErrors.password =
+        "Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number and one special character.";
     }
 
     setErrors(newErrors);
 
-    return !newErrors.email && !newErrors.password;
+    return !newErrors.name && !newErrors.email && !newErrors.password;
   };
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
     if (!validateForm()) return;
 
     try {
       setLoading(true);
 
-      const response = await fetch(`${API_URL}/api/auth/login`, {
+      const response = await fetch(`${API_URL}/api/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          name: name.trim(),
           email: email.trim(),
           password,
         }),
@@ -69,17 +81,15 @@ function Login() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.detail || "Login failed.");
+        throw new Error(data.detail || "Registration failed.");
       }
 
-      login(data.user, data.access_token);
-
       setToastType("success");
-      setToastMessage("Login successful!");
+      setToastMessage("Registration successful! Please login.");
       setShowToast(true);
 
       setTimeout(() => {
-        navigate("/dashboard");
+        navigate("/login");
       }, 1200);
     } catch (error) {
       setToastType("error");
@@ -90,22 +100,35 @@ function Login() {
     }
   };
 
-  const loginWithGoogle = () => {
-    window.location.href = "http://127.0.0.1:8000/api/auth/google/login";
-  };
-
   return (
     <div className="max-w-md mx-auto py-16 px-6">
       <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-8">
         <h1 className="text-4xl font-bold text-center text-teal-800 dark:text-teal-400">
-          Welcome Back
+          Create Account
         </h1>
 
         <p className="text-center text-gray-600 mt-3 mb-8 dark:text-gray-300">
-          Login to manage bookings and AI travel plans.
+          Register to start booking homestays.
         </p>
 
         <div className="space-y-5">
+          <Input
+            label="Full Name"
+            placeholder="Enter your full name"
+            value={name}
+            error={errors.name}
+            onChange={(e) => {
+              setName(e.target.value);
+
+              if (errors.name) {
+                setErrors((prev) => ({
+                  ...prev,
+                  name: "",
+                }));
+              }
+            }}
+          />
+
           <Input
             label="Email"
             type="email"
@@ -142,35 +165,19 @@ function Login() {
             }}
           />
 
-          <Button size="lg" onClick={handleLogin} disabled={loading}>
-            {loading ? "Logging in..." : "Login"}
-          </Button>
-
-          <div className="relative my-2">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300 dark:border-slate-600"></div>
-            </div>
-
-            <div className="relative flex justify-center text-sm">
-              <span className="bg-white dark:bg-slate-800 px-3 text-gray-500">
-                OR
-              </span>
-            </div>
-          </div>
-
-          <Button variant="outline" size="lg" onClick={loginWithGoogle}>
-            Continue with Google
+          <Button size="lg" onClick={handleRegister} disabled={loading}>
+            {loading ? "Creating Account..." : "Register"}
           </Button>
         </div>
 
         <p className="text-center text-gray-600 mt-6 dark:text-gray-300">
-          Don't have an account?
+          Already have an account?
           <Link
-            to="/register"
+            to="/login"
             className="text-teal-700 dark:text-teal-300 font-semibold"
           >
             {" "}
-            Sign Up
+            Login
           </Link>
         </p>
       </div>
@@ -186,4 +193,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default Register;

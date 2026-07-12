@@ -11,7 +11,9 @@ import TravelPlanner from "./pages/TravelPlanner";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Settings from "./pages/Settings";
-import UIShowcase from "./pages/UIShowcase";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Register from "./pages/Register";
+import OAuthSuccess from "./pages/OAuthSuccess";
 
 function App() {
   return (
@@ -23,13 +25,44 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/homestay/:id" element={<HomestayDetails />} />
-          <Route path="/booking/:id" element={<Booking />} />
-          <Route path="/booking/edit/:id" element={<Booking />} />
+          <Route
+            path="/booking/:id"
+            element={
+              <ProtectedRoute>
+                <Booking />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/booking/edit/:id"
+            element={
+              <ProtectedRoute>
+                <Booking />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/travelplanner" element={<TravelPlanner />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <Settings />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/login" element={<Login />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/uishowcase" element={<UIShowcase />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/oauth-success" element={<OAuthSuccess />} />
         </Routes>
       </main>
 

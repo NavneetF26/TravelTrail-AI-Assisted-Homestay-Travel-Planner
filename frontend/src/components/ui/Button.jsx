@@ -3,8 +3,8 @@
  *
  * Props:
  * - children: Button text/content
- * - variant: primary | secondary | outline
- * * - size: sm | md | lg
+ * - variant: primary | secondary | outline | danger
+ * - size: sm | md | lg
  * - disabled: true | false
  * - onClick: function
  */
@@ -22,7 +22,9 @@ function Button({
     secondary:
       "bg-violet-500 text-white hover:bg-violet-700 dark:bg-violet-600 dark:hover:bg-violet-700",
     outline:
-      "border border-sky-600 text-sky-700 hover:bg-sky-100 dark:border-sky-300 dark:text-sky-300 dark:hover:bg-gray-800 dark:hover:text-sky-100",
+      "border border-teal-800 text-teal-700 hover:text-white hover:bg-teal-700 dark:border-teal-300 dark:text-teal-300 dark:hover:bg-teal-800 dark:hover:text-white",
+    danger:
+      "bg-red-600 text-white hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700",
   };
 
   const sizes = {

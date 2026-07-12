@@ -1,24 +1,53 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { Heart } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 import RoomCard from "../components/RoomCard";
 
 function HomestayDetails() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
+  const API = "http://127.0.0.1:8000/api";
+
+  const token = localStorage.getItem("token");
+
+  const [saving, setSaving] = useState(false);
   const [homestay, setHomestay] = useState(null);
   const [heroImage, setHeroImage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     const fetchHomestay = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`http://127.0.0.1:8000/api/homestays/${id}`);
-        if (!res.ok) throw new Error("Failed to fetch homestay");
+
+        const res = await fetch(`${API}/homestays/${id}`);
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch homestay");
+        }
+
         const data = await res.json();
+
         setHomestay(data);
         setHeroImage(0);
+
+        if (isAuthenticated) {
+          const savedRes = await fetch(`${API}/saved/${id}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (savedRes.ok) {
+            const savedData = await savedRes.json();
+            setSaved(savedData.saved);
+          }
+        }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -27,7 +56,7 @@ function HomestayDetails() {
     };
 
     fetchHomestay();
-  }, [id]);
+  }, [id, isAuthenticated, token]);
 
   const changeImage = (dir) =>
     setHeroImage((prev) => {
@@ -35,6 +64,42 @@ function HomestayDetails() {
       return (prev + dir + total) % total;
     });
 
+  const toggleSaved = async () => {
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
+
+    try {
+      setSaving(true);
+
+      const method = saved ? "DELETE" : "POST";
+
+      const res = await fetch(`${API}/saved/${id}`, {
+        method,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (res.status === 401) {
+        navigate("/login");
+        return;
+      }
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.detail);
+      }
+
+      setSaved(!saved);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSaving(false);
+    }
+  };
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-600">
@@ -110,6 +175,20 @@ function HomestayDetails() {
             </p>
             <p className="mt-2 text-yellow-600">⭐ {homestay.rating}</p>
           </div>
+
+          <button
+            onClick={toggleSaved}
+            disabled={saving}
+            className={`flex items-center gap-2 rounded-lg border px-4 py-2 transition ${
+              saved
+                ? "border-red-200 bg-red-50 text-red-600 dark:border-red-700 dark:bg-red-900 dark:text-red-400"
+                : "border-slate-200 bg-white text-slate-700 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300"
+            }`}
+          >
+            <Heart size={18} fill={saved ? "currentColor" : "none"} />
+
+            {saving ? "Saving..." : saved ? "Saved" : "Save"}
+          </button>
         </div>
 
         {/* Description */}

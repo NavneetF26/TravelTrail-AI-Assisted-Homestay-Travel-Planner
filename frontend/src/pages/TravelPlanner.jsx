@@ -1,7 +1,18 @@
 import { useState } from "react";
 import { Input, Button, Loader, Toast } from "../components/ui";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 function TravelPlanner() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      navigate("/login");
+    }
+  }, [navigate]);
   const [loading, setLoading] = useState(false);
   const [generated, setGenerated] = useState(false);
   const [showToast, setShowToast] = useState(false);

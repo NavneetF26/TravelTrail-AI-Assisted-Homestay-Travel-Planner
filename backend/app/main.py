@@ -13,6 +13,7 @@ from app.utils.rate_limiter import limiter
 from app.routes.homestays import router as homestay_router
 from app.routes.bookings import router as booking_router
 from app.routes.saved import router as saved_router
+from app.routes import planner
 from app.routes import auth
 
 from app.utils.error_handler import generic_exception_handler
@@ -56,6 +57,7 @@ app.add_middleware(
 app.include_router(homestay_router)
 app.include_router(booking_router)
 app.include_router(saved_router)
+app.include_router(planner.router)
 app.include_router(auth.router)
 
 # -----------------------------

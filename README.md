@@ -1,6 +1,6 @@
 # TravelTrail: AI-Assisted Homestay & Travel Planner
 
-An AI-assisted homestay booking and travel planning platform designed to help travelers explore homestay information, check room availability, submit booking requests, and plan their trips with AI assistance.
+An AI-assisted homestay booking and travel planning platform that enables travelers to discover homestays, manage bookings, save favorites, and generate personalized travel itineraries using Google's Gemini AI.
 
 ---
 
@@ -11,7 +11,11 @@ An AI-assisted homestay booking and travel planning platform designed to help tr
 - Search homestays by name, location, and budget
 - View available rooms and amenities
 - Create, update, view, and delete bookings
-- AI Travel Planner (in progress)
+- Save and manage favorite homestays
+- User Authentication (Register/Login & Google Sign-In)
+- AI-powered Travel Planner using Google Gemini
+- Personalized day-wise travel itineraries
+- Budget-aware travel recommendations
 
 ---
 
@@ -27,6 +31,7 @@ An AI-assisted homestay booking and travel planning platform designed to help tr
 
 - FastAPI (Python)
 - Uvicorn
+- Google Gemini API
 - Python-dotenv
 - CORS Middleware
 
@@ -34,6 +39,22 @@ An AI-assisted homestay booking and travel planning platform designed to help tr
 
 - MongoDB Atlas
 - PyMongo
+
+---
+
+## AI Integration
+
+TravelTrail integrates Google's Gemini API to generate personalized travel itineraries.
+
+The AI Travel Planner allows users to:
+
+- Enter a destination
+- Specify their budget
+- Choose trip duration
+- Select travel interests
+- Add optional travel preferences
+
+The backend securely communicates with the Google Gemini API using an API key stored in environment variables. The AI-generated response is validated before being returned to the frontend, where it is displayed as a personalized day-wise travel itinerary.
 
 ---
 
@@ -105,10 +126,12 @@ TravelTrail uses **MongoDB Atlas** as its primary database.
 
 MongoDB was chosen because it stores data as flexible JSON-like documents, making it ideal for the project's nested structure where each homestay contains rooms, amenities, images, and nearby attractions inside a single document.
 
-The application currently uses two collections:
+The application currently uses the following collections:
 
+- **users**
 - **homestays**
 - **bookings**
+- **saved_homestays**
 
 ---
 
@@ -133,10 +156,26 @@ Create a `.env` file inside the `backend` folder.
 Example:
 
 ```env
-MONGO_URI=your_mongodb_connection_string
+# MongoDB
+MONGO_URI=mongodb+srv://<username>:<password>@<cluster-name>.mongodb.net/?retryWrites=true&w=majority&appName=<app-name>
+
+# JWT Authentication
+JWT_SECRET=your_secret_key
+JWT_ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_DAYS=7
+
+# Google OAuth
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+
+# Session
+SESSION_SECRET=your_session_secret
+
+# Google Gemini AI
+GEMINI_API_KEY=your_gemini_api_key
 ```
 
-A sample configuration is provided in `.env.example`.
+A sample configuration is also provided in `.env.example`.
 
 ---
 
@@ -152,9 +191,11 @@ python scripts/seed.py
 
 ## Database Collections
 
-The project currently contains two MongoDB collections:
+The project currently contains the following MongoDB collections:
 
+- **users** – Stores user profile information and authentication details.
 - **homestays** – Stores homestay details, rooms, amenities, images, and nearby attractions.
-- **bookings** – Stores booking details, guest information, and booking status.
+- **bookings** – Stores booking details, guest information, travel dates, and booking status.
+- **saved_homestays** – Stores users' saved or favorite homestays for quick access.
 
 ---

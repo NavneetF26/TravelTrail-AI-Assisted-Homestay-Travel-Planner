@@ -16,6 +16,7 @@ An AI-assisted homestay booking and travel planning platform that enables travel
 - AI-powered Travel Planner using Google Gemini
 - Personalized day-wise travel itineraries
 - Budget-aware travel recommendations
+- Personalized user dashboard
 
 ---
 
@@ -25,7 +26,7 @@ An AI-assisted homestay booking and travel planning platform that enables travel
 
 - React.js
 - Tailwind CSS
-- Axios / Fetch API
+- Fetch API
 
 ### Backend
 
@@ -176,16 +177,6 @@ GEMINI_API_KEY=your_gemini_api_key
 ```
 
 A sample configuration is also provided in `.env.example`.
-
----
-
-## 3. Seed the Database
-
-Run the seed script once from the backend folder to import the initial homestay data.
-
-```bash
-python scripts/seed.py
-```
 
 ---
 

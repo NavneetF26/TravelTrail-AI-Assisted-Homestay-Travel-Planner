@@ -1,22 +1,18 @@
 import os
 import json
-
 import google.generativeai as genai
 from dotenv import load_dotenv
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
 load_dotenv()
-
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-
 model = genai.GenerativeModel("gemini-flash-lite-latest")
 
 router = APIRouter(
     prefix="/api/ai",
     tags=["AI Planner"]
 )
-
 
 class TravelPlanRequest(BaseModel):
     destination: str = Field(..., min_length=2)
@@ -76,19 +72,15 @@ Return exactly in this format:
 
     try:
         response = model.generate_content(prompt)
-
         ai_response = response.text
-
         # Remove markdown code fences if Gemini returns them
         ai_response = (
             ai_response.replace("```json", "")
             .replace("```", "")
             .strip()
         )
-
         # Validate JSON
         plan = json.loads(ai_response)
-
         return plan
 
     except json.JSONDecodeError:

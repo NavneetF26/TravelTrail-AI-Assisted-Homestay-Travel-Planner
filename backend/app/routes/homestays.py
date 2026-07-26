@@ -22,53 +22,44 @@ def get_homestays():
         for homestay in homestays
     ]
 
-
 @router.get("/search")
 def search_homestays(
     q: str = "",
     location: str = "",
     budget: str = ""
 ):
-    results = list(homestays_collection.find())
-
+    query = {}
     if q:
-        results = [
-            h for h in results
-            if q.lower() in h["name"].lower()
-            or q.lower() in h["location"].lower()
+        query["$or"] = [
+            {"name": {"$regex": q, "$options": "i"}},
+            {"location": {"$regex": q, "$options": "i"}},
         ]
-
     if location:
-        results = [
-            h for h in results
-            if location.lower() in h["location"].lower()
-        ]
-
+        query["location"] = {
+            "$regex": location,
+            "$options": "i",
+        }
+    homestays = list(homestays_collection.find(query))
     if budget:
-
         if budget == "₹1000 - ₹2000":
-            results = [
-                h for h in results
+            homestays = [
+                h for h in homestays
                 if 1000 <= h["price"] <= 2000
             ]
-
         elif budget == "₹2000 - ₹3000":
-            results = [
-                h for h in results
+            homestays = [
+                h for h in homestays
                 if 2000 <= h["price"] <= 3000
             ]
-
         elif budget == "₹3000 - ₹5000":
-            results = [
-                h for h in results
+            homestays = [
+                h for h in homestays
                 if 3000 <= h["price"] <= 5000
             ]
-
     return [
-        serialize_homestay(homestay)
-        for homestay in results
+        serialize_homestay(h)
+        for h in homestays
     ]
-
 
 @router.get("/{homestay_id}")
 def get_homestay(homestay_id: int):

@@ -1,5 +1,4 @@
 import os
-
 from dotenv import load_dotenv
 from pymongo import MongoClient
 from pymongo.server_api import ServerApi
@@ -23,5 +22,6 @@ db = client["traveltrail"]
 homestays_collection = db["homestays"]
 bookings_collection = db["bookings"]
 users_collection = db["users"]
-
 saved_homestays_collection = db["saved_homestays"]
+
+ADMIN_EMAIL = os.getenv("ADMIN_EMAIL")

@@ -3,7 +3,6 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { Input, Button, Toast, Loader } from "../components/ui";
 
 const API = "http://127.0.0.1:8000/api";
-
 const FIELD_GROUPS = [
   [
     {
@@ -40,7 +39,6 @@ function Booking() {
   const { id } = useParams();
   const location = useLocation();
   const editMode = location.pathname.includes("/edit/");
-
   const [homestay, setHomestay] = useState(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -59,26 +57,19 @@ function Booking() {
     message: "",
     variant: "success",
   });
-
   const showToast = (message, variant = "success") =>
     setToast({ show: true, message, variant });
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/immutability
     loadData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function loadData() {
-    // Read token/user fresh on every load, not at module scope
     const token = localStorage.getItem("token");
     const user = JSON.parse(localStorage.getItem("user") || "null");
-
     try {
       setLoading(true);
-
       let homestayId = id;
-
       let prefill = {
         room_id: location.state?.roomId,
         full_name: user?.name || "",
@@ -86,31 +77,17 @@ function Booking() {
       };
 
       if (editMode) {
-        const bookingRes = await fetch(`${API}/bookings/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        const res = await fetch(`${API}/bookings/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
         });
-
-        if (bookingRes.status === 401) {
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
-          navigate("/login");
-          return;
-        }
-
-        if (!bookingRes.ok) {
-          throw new Error("Unable to load booking.");
-        }
-
-        prefill = await bookingRes.json();
+        if (res.status === 401) return logoutRedirect();
+        if (!res.ok) throw new Error("Unable to load booking.");
+        prefill = await res.json();
         homestayId = prefill.homestay_id;
       }
 
       const home = await (await fetch(`${API}/homestays/${homestayId}`)).json();
-
       setHomestay(home);
-
       setForm((p) => ({
         ...p,
         room_id: prefill.room_id || home.rooms[0].id,
@@ -128,13 +105,18 @@ function Booking() {
     }
   }
 
+  function logoutRedirect() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login");
+  }
+
   const change = (field) => (e) =>
     setForm({ ...form, [field]: e.target.value });
 
   function validate(room) {
     const err = {};
     const today = new Date().toISOString().split("T")[0];
-
     for (const k in form) if (!form[k]) err[k] = "Required";
     if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
       err.email = "Enter a valid email address";
@@ -146,7 +128,6 @@ function Booking() {
       err.check_out = "Check-out must be after check-in";
     if (room && form.guests && Number(form.guests) > room.capacity)
       err.guests = `Maximum ${room.capacity} guests allowed`;
-
     setErrors(err);
     if (Object.keys(err).length) {
       showToast(Object.values(err)[0], "error");
@@ -157,16 +138,13 @@ function Booking() {
 
   async function submit(room) {
     if (!validate(room)) return;
-
     const token = localStorage.getItem("token");
-
     const body = {
       ...form,
       homestay_id: homestay.id,
       room_id: Number(form.room_id),
       guests: Number(form.guests),
     };
-
     try {
       setSubmitting(true);
       const res = await fetch(
@@ -180,22 +158,15 @@ function Booking() {
           body: JSON.stringify(body),
         },
       );
-      if (res.status === 401) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        navigate("/login");
-        return;
-      }
+      if (res.status === 401) return logoutRedirect();
       const data = await res.json();
-
-      if (!res.ok) {
-        const message = Array.isArray(data.detail)
-          ? data.detail[0].msg
-          : data.detail || "Something went wrong.";
-        showToast(message, "error");
-        return;
-      }
-
+      if (!res.ok)
+        return showToast(
+          Array.isArray(data.detail)
+            ? data.detail[0].msg
+            : data.detail || "Something went wrong.",
+          "error",
+        );
       showToast(
         editMode
           ? "Booking updated successfully"
@@ -211,7 +182,6 @@ function Booking() {
 
   if (loading) return <Loader text="Loading..." />;
   if (!homestay) return <p className="text-red-500">Homestay not found</p>;
-
   const room = homestay.rooms.find((r) => r.id === Number(form.room_id));
 
   return (
@@ -224,7 +194,6 @@ function Booking() {
           {editMode ? "Update your booking details." : "Fill in your details."}
         </p>
       </div>
-
       <div className="grid lg:grid-cols-[320px_1fr] gap-8">
         <div className="bg-white dark:bg-slate-800 rounded-2xl shadow p-5">
           <h2 className="text-xl font-bold text-teal-700 dark:text-teal-300">
@@ -243,7 +212,6 @@ function Booking() {
             </p>
           </div>
         </div>
-
         <div className="bg-white dark:bg-slate-700 rounded-2xl shadow p-8">
           <div className="space-y-5">
             {FIELD_GROUPS.map((group, i) => (
@@ -265,7 +233,6 @@ function Booking() {
                 ))}
               </div>
             ))}
-
             <div className="flex justify-end gap-3 pt-4">
               <Button
                 variant="outline"

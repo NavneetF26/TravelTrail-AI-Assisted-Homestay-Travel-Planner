@@ -3,10 +3,12 @@ import { Input, Button, Loader, Toast } from "../components/ui";
 import { useNavigate } from "react-router-dom";
 
 const API_URL = "http://127.0.0.1:8000";
+const Required = () => (
+  <span className="text-violet-800 dark:text-violet-500">*</span>
+);
 
 function TravelPlanner() {
   const navigate = useNavigate();
-
   useEffect(() => {
     if (!localStorage.getItem("token")) navigate("/login");
   }, [navigate]);
@@ -24,7 +26,6 @@ function TravelPlanner() {
     message: "",
     variant: "success",
   });
-
   const notify = (message, variant = "success") =>
     setToast({ show: true, message, variant });
 
@@ -62,14 +63,11 @@ function TravelPlanner() {
       !budget.trim() ||
       !duration.trim() ||
       !interests.trim()
-    ) {
+    )
       return notify("Please fill all required fields.", "error");
-    }
-
     try {
       setLoading(true);
       setGenerated(false);
-
       const res = await fetch(`${API_URL}/api/ai/travel-plan`, {
         method: "POST",
         headers: {
@@ -86,7 +84,6 @@ function TravelPlanner() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail || "Unable to generate plan.");
-
       setPlan(data.days || []);
       setGenerated(true);
       notify("Travel plan generated successfully!");
@@ -107,19 +104,18 @@ function TravelPlanner() {
     setGenerated(false);
   };
 
+  const activityText = (a) =>
+    typeof a === "object" && a
+      ? a.time
+        ? `${a.time} - ${a.activity}`
+        : a.activity
+      : a;
+
   const buildPlanText = () =>
     plan
       .map((day) => {
         const header = day.title ? `${day.day}: ${day.title}` : day.day;
-        const activities = (day.activities || [])
-          .map((a) =>
-            typeof a === "object" && a
-              ? a.time
-                ? `${a.time} - ${a.activity}`
-                : a.activity
-              : a,
-          )
-          .join("\n");
+        const activities = (day.activities || []).map(activityText).join("\n");
         return `${header}\n${activities}${day.notes ? `\nTip: ${day.notes}` : ""}`;
       })
       .join("\n\n");
@@ -144,7 +140,6 @@ function TravelPlanner() {
           .trim()
           .replace(/[^a-z0-9]+/gi, "-")
           .toLowerCase() || "trip";
-
       const link = document.createElement("a");
       link.href = url;
       link.download = `travel-plan-${safeName}.txt`;
@@ -152,7 +147,6 @@ function TravelPlanner() {
       link.click();
       link.remove();
       URL.revokeObjectURL(url);
-
       notify("Plan downloaded!");
     } catch {
       notify("Could not save plan.", "error");
@@ -175,7 +169,11 @@ function TravelPlanner() {
           {fields.map((f) => (
             <Input
               key={f.label}
-              label={f.label}
+              label={
+                <>
+                  {f.label} <Required />
+                </>
+              }
               type={f.type}
               placeholder={f.placeholder}
               value={f.value}
@@ -246,7 +244,6 @@ function TravelPlanner() {
                         typeof activity === "object" && activity !== null;
                       const time = isObj ? activity.time : "";
                       const text = isObj ? activity.activity : activity;
-
                       return (
                         <div key={i} className="flex items-start gap-3">
                           {time ? (

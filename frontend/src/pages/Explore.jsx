@@ -5,7 +5,6 @@ import { Search, ChevronDown, Check } from "lucide-react";
 
 function CustomSelect({ label, placeholder, options, value, onChange }) {
   const [isOpen, setIsOpen] = useState(false);
-
   const selectOption = (option) => {
     onChange(option);
     setIsOpen(false);
@@ -16,7 +15,6 @@ function CustomSelect({ label, placeholder, options, value, onChange }) {
       <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
         {label}
       </label>
-
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
@@ -60,23 +58,18 @@ function Explore() {
   const [homestays, setHomestays] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchText, setSearchText] = useState("");
-  const [location, setLocation] = useState("");
   const [budget, setBudget] = useState("");
 
-  const fetchHomestays = async (search = "", loc = "", bud = "") => {
+  const fetchHomestays = async (search = "", bud = "") => {
     try {
       setLoading(true);
       const params = new URLSearchParams();
       if (search) params.append("q", search);
-      if (loc) params.append("location", loc);
       if (bud) params.append("budget", bud);
-
       const url = params.toString()
         ? `http://127.0.0.1:8000/api/homestays/search?${params}`
         : "http://127.0.0.1:8000/api/homestays/";
-
-      const data = await (await fetch(url)).json();
-      setHomestays(data);
+      setHomestays(await (await fetch(url)).json());
     } catch (err) {
       console.error(err);
     } finally {
@@ -85,15 +78,13 @@ function Explore() {
   };
 
   useEffect(() => {
-    const t = setTimeout(() => fetchHomestays(), 0);
-    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchHomestays();
   }, []);
 
-  const applyFilters = () => fetchHomestays(searchText, location, budget);
-
+  const applyFilters = () => fetchHomestays(searchText, budget);
   const clearFilters = () => {
     setSearchText("");
-    setLocation("");
     setBudget("");
     fetchHomestays();
   };
@@ -105,13 +96,13 @@ function Explore() {
           Explore Homestays
         </h1>
         <p className="mt-2 text-gray-600 dark:text-gray-300">
-          Find the perfect stay based on your preferences.
+          Search by homestay name or location.
         </p>
       </div>
 
       <div className="relative mb-8">
         <Input
-          placeholder="Search homestays, locations..."
+          placeholder="Search by homestay or location (e.g. Mussoorie, Auli, Rishikesh)"
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
         />
@@ -128,15 +119,7 @@ function Explore() {
           <h2 className="mb-5 text-lg font-bold text-teal-800 dark:text-teal-200">
             Filters
           </h2>
-
           <div className="space-y-4">
-            <CustomSelect
-              label="Location"
-              placeholder="Select Location"
-              value={location}
-              onChange={setLocation}
-              options={["Mussoorie", "Rishikesh", "Dehradun"]}
-            />
             <CustomSelect
               label="Budget"
               placeholder="Select Budget"
@@ -145,7 +128,6 @@ function Explore() {
               options={["₹1000 - ₹2000", "₹2000 - ₹3000", "₹3000 - ₹5000"]}
             />
           </div>
-
           <div className="mt-6 flex flex-col gap-3">
             <Button onClick={applyFilters}>Apply Filters</Button>
             <Button variant="outline" onClick={clearFilters}>
@@ -167,6 +149,15 @@ function Explore() {
           {loading ? (
             <div className="flex justify-center py-12">
               <Loader text="Loading homestays..." />
+            </div>
+          ) : homestays.length === 0 ? (
+            <div className="rounded-xl bg-white dark:bg-slate-800 p-10 text-center shadow">
+              <h3 className="text-xl font-semibold text-teal-700 dark:text-teal-300">
+                No homestays found
+              </h3>
+              <p className="mt-2 text-gray-500 dark:text-gray-400">
+                Try another location or adjust your budget filter.
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">

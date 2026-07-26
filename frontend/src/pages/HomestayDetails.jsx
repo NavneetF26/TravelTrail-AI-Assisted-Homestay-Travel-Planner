@@ -4,13 +4,12 @@ import { Heart } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import RoomCard from "../components/RoomCard";
 
+const API = "http://127.0.0.1:8000/api";
+
 function HomestayDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
-
-  const API = "http://127.0.0.1:8000/api";
-
   const token = localStorage.getItem("token");
 
   const [saving, setSaving] = useState(false);
@@ -21,78 +20,44 @@ function HomestayDetails() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    const fetchHomestay = async () => {
+    (async () => {
       try {
         setLoading(true);
-
         const res = await fetch(`${API}/homestays/${id}`);
-
-        if (!res.ok) {
-          throw new Error("Failed to fetch homestay");
-        }
-
-        const data = await res.json();
-
-        setHomestay(data);
+        if (!res.ok) throw new Error("Failed to fetch homestay");
+        setHomestay(await res.json());
         setHeroImage(0);
 
         if (isAuthenticated) {
           const savedRes = await fetch(`${API}/saved/${id}`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
           });
-
-          if (savedRes.ok) {
-            const savedData = await savedRes.json();
-            setSaved(savedData.saved);
-          }
+          if (savedRes.ok) setSaved((await savedRes.json()).saved);
         }
       } catch (err) {
         setError(err.message);
       } finally {
         setLoading(false);
       }
-    };
-
-    fetchHomestay();
+    })();
   }, [id, isAuthenticated, token]);
 
   const changeImage = (dir) =>
-    setHeroImage((prev) => {
-      const total = homestay.images.length;
-      return (prev + dir + total) % total;
-    });
+    setHeroImage(
+      (prev) => (prev + dir + homestay.images.length) % homestay.images.length,
+    );
 
   const toggleSaved = async () => {
-    if (!isAuthenticated) {
-      navigate("/login");
-      return;
-    }
-
+    if (!isAuthenticated) return navigate("/login");
     try {
       setSaving(true);
-
-      const method = saved ? "DELETE" : "POST";
-
       const res = await fetch(`${API}/saved/${id}`, {
-        method,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        method: saved ? "DELETE" : "POST",
+        headers: { Authorization: `Bearer ${token}` },
       });
-
-      if (res.status === 401) {
-        navigate("/login");
-        return;
-      }
-
+      if (res.status === 401) return navigate("/login");
       const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.detail);
-      }
-
+      if (!res.ok) throw new Error(data.detail);
       setSaved(!saved);
     } catch (err) {
       console.error(err);
@@ -100,32 +65,28 @@ function HomestayDetails() {
       setSaving(false);
     }
   };
-  if (loading) {
+
+  if (loading)
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-600">
         Loading...
       </div>
     );
-  }
-
-  if (error || !homestay) {
+  if (error || !homestay)
     return (
       <div className="min-h-screen flex items-center justify-center text-red-500">
         {error || "Homestay not found"}
       </div>
     );
-  }
 
   return (
     <div className="min-h-screen">
-      {/* Hero */}
       <section className="relative h-112.5 overflow-hidden">
         <img
           src={homestay.images[heroImage]}
           alt={homestay.name}
           className="w-full h-full object-cover"
         />
-
         <div className="absolute inset-0 bg-black/35" />
 
         <Link
@@ -141,7 +102,6 @@ function HomestayDetails() {
         >
           ‹
         </button>
-
         <button
           onClick={() => changeImage(1)}
           className="absolute right-5 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/70 text-white"
@@ -149,21 +109,17 @@ function HomestayDetails() {
           ›
         </button>
 
-        {/* dots */}
         <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-2">
           {homestay.images.map((_, index) => (
             <button
               key={index}
               onClick={() => setHeroImage(index)}
-              className={`w-3 h-3 rounded-full ${
-                heroImage === index ? "bg-white" : "bg-white/50"
-              }`}
+              className={`w-3 h-3 rounded-full ${heroImage === index ? "bg-white" : "bg-white/50"}`}
             />
           ))}
         </div>
       </section>
 
-      {/* Content */}
       <main className="max-w-7xl mx-auto px-6 py-10">
         <div className="flex justify-between items-start gap-6">
           <div>
@@ -175,23 +131,16 @@ function HomestayDetails() {
             </p>
             <p className="mt-2 text-yellow-600">⭐ {homestay.rating}</p>
           </div>
-
           <button
             onClick={toggleSaved}
             disabled={saving}
-            className={`flex items-center gap-2 rounded-lg border px-4 py-2 transition ${
-              saved
-                ? "border-red-200 bg-red-50 text-red-600 dark:border-red-700 dark:bg-red-900 dark:text-red-400"
-                : "border-slate-200 bg-white text-slate-700 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300"
-            }`}
+            className={`flex items-center gap-2 rounded-lg border px-4 py-2 transition ${saved ? "border-red-200 bg-red-50 text-red-600 dark:border-red-700 dark:bg-red-900 dark:text-red-400" : "border-slate-200 bg-white text-slate-700 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300"}`}
           >
             <Heart size={18} fill={saved ? "currentColor" : "none"} />
-
             {saving ? "Saving..." : saved ? "Saved" : "Save"}
           </button>
         </div>
 
-        {/* Description */}
         <section className="mt-10">
           <h2 className="text-2xl font-bold text-teal-800 dark:text-teal-300">
             About
@@ -201,12 +150,10 @@ function HomestayDetails() {
           </p>
         </section>
 
-        {/* Amenities */}
         <section className="mt-12">
           <h2 className="text-2xl font-bold text-teal-800 dark:text-teal-300">
             Amenities
           </h2>
-
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
             {homestay.amenities?.map((a, index) => (
               <div key={index} className="p-4 border rounded-xl">
@@ -217,12 +164,10 @@ function HomestayDetails() {
           </div>
         </section>
 
-        {/* Rooms */}
         <section className="mt-14">
           <h2 className="text-2xl font-bold text-teal-800 dark:text-teal-300">
             Available Rooms
           </h2>
-
           <div className="space-y-6 mt-6">
             {homestay.rooms?.map((room) => (
               <RoomCard key={room.id} room={room} homestayId={homestay.id} />
@@ -230,12 +175,10 @@ function HomestayDetails() {
           </div>
         </section>
 
-        {/* Nearby */}
         <section className="mt-14">
           <h2 className="text-2xl font-bold text-teal-800 dark:text-teal-300">
             Nearby Attractions
           </h2>
-
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
             {homestay.nearbyAttractions?.map((p, index) => (
               <div key={index} className="border rounded-xl overflow-hidden">

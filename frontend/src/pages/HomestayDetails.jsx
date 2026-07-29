@@ -129,7 +129,6 @@ function HomestayDetails() {
             <p className="text-gray-600 dark:text-gray-300 mt-2">
               📍 {homestay.location}
             </p>
-            <p className="mt-2 text-yellow-600">⭐ {homestay.rating}</p>
           </div>
           <button
             onClick={toggleSaved}
@@ -155,10 +154,9 @@ function HomestayDetails() {
             Amenities
           </h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-            {homestay.amenities?.map((a, index) => (
+            {homestay.amenities?.map((name, index) => (
               <div key={index} className="p-4 border rounded-xl">
-                <span className="text-2xl">{a.icon}</span>
-                <p className="mt-2">{a.name}</p>
+                <p>{name}</p>
               </div>
             ))}
           </div>
@@ -180,7 +178,7 @@ function HomestayDetails() {
             Nearby Attractions
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
-            {homestay.nearbyAttractions?.map((p, index) => (
+            {homestay.nearby_attractions?.map((p, index) => (
               <div key={index} className="border rounded-xl overflow-hidden">
                 <img
                   src={p.image}

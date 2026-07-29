@@ -14,12 +14,12 @@ import Settings from "./pages/Settings";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Register from "./pages/Register";
 import OAuthSuccess from "./pages/OAuthSuccess";
+import ManageHomestay from "./pages/ManageHomestay";
 
 function App() {
   return (
     <div className="min-h-screen flex flex-col bg-teal-50 dark:bg-slate-900 transition-colors duration-300">
       <Navbar />
-
       <main className="flex-1">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -33,7 +33,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/booking/edit/:id"
             element={
@@ -51,7 +50,22 @@ function App() {
               </ProtectedRoute>
             }
           />
-
+          <Route
+            path="/manage-homestay"
+            element={
+              <ProtectedRoute>
+                <ManageHomestay />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/manage-homestay/:id"
+            element={
+              <ProtectedRoute>
+                <ManageHomestay />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/settings"
             element={
@@ -65,10 +79,8 @@ function App() {
           <Route path="/oauth-success" element={<OAuthSuccess />} />
         </Routes>
       </main>
-
       <Footer />
     </div>
   );
 }
-
 export default App;

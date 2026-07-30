@@ -1,4 +1,4 @@
-import re
+import os,re
 from fastapi import APIRouter, HTTPException, status, Depends, Request
 from app.utils.rate_limiter import limiter
 from app.database import (
@@ -23,10 +23,10 @@ from fastapi.responses import RedirectResponse
 from app.utils.oauth import oauth
 
 router = APIRouter(
+    FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
     prefix="/api/auth",
     tags=["Authentication"]
 )
-
 @router.post(
     "/register",
     response_model=UserResponse,
@@ -246,11 +246,8 @@ async def google_callback(request: Request):
         }
     )
     return RedirectResponse(
-        url=(
-            "http://localhost:5173/oauth-success"
-            f"?token={jwt_token}"
-        )
-    )
+    url=f"{FRONTEND_URL}/oauth-success?token={jwt_token}"
+)
 
 @router.post("/logout")
 def logout():

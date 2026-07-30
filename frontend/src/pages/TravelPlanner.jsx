@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Input, Button, Loader, Toast } from "../components/ui";
 import { useNavigate } from "react-router-dom";
 
-const API_URL = "http://127.0.0.1:8000";
+const API_URL = import.meta.env.VITE_API_URL;
 const Required = () => (
   <span className="text-violet-800 dark:text-violet-500">*</span>
 );
@@ -163,7 +163,6 @@ function TravelPlanner() {
           Let AI create a personalized itinerary for your trip.
         </p>
       </div>
-
       <div className="grid lg:grid-cols-5 gap-6">
         <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-xl shadow border border-transparent dark:border-slate-700 p-6 space-y-5 [&_label]:text-violet-800! dark:[&_label]:text-violet-400!">
           {fields.map((f) => (
@@ -180,7 +179,6 @@ function TravelPlanner() {
               onChange={(e) => f.set(e.target.value)}
             />
           ))}
-
           <div>
             <label className="font-medium">
               Additional Preferences (Optional)
@@ -196,7 +194,6 @@ function TravelPlanner() {
               className="w-full mt-1 rounded-lg border border-gray-400 bg-white dark:bg-slate-700 dark:text-gray-300 px-3 py-2 outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600"
             />
           </div>
-
           <div className="flex justify-end pt-2">
             <Button
               variant="secondary"
@@ -208,18 +205,15 @@ function TravelPlanner() {
             </Button>
           </div>
         </div>
-
         <div className="lg:col-span-3 bg-white dark:bg-slate-800 rounded-xl shadow border border-transparent dark:border-slate-700 p-6 min-h-130">
           <h2 className="text-xl font-semibold text-violet-800 mb-4 dark:text-violet-400">
             Your Travel Plan
           </h2>
-
           {loading && (
             <div className="flex justify-center items-center h-80">
               <Loader text="Generating your plan..." />
             </div>
           )}
-
           {!loading && generated && (
             <div className="space-y-5">
               {plan.map((day, index) => (
@@ -237,7 +231,6 @@ function TravelPlanner() {
                       </span>
                     )}
                   </div>
-
                   <div className="space-y-3">
                     {(day.activities || []).map((activity, i) => {
                       const isObj =
@@ -260,7 +253,6 @@ function TravelPlanner() {
                       );
                     })}
                   </div>
-
                   {day.notes && (
                     <div className="mt-5 rounded-lg bg-violet-100 dark:bg-violet-900/50 p-3">
                       <p className="text-sm text-gray-700 dark:text-gray-200">
@@ -270,7 +262,6 @@ function TravelPlanner() {
                   )}
                 </div>
               ))}
-
               <div className="flex flex-wrap justify-end gap-3 pt-2">
                 <Button variant="outline" onClick={copyPlan}>
                   📋 Copy Plan
@@ -284,7 +275,6 @@ function TravelPlanner() {
               </div>
             </div>
           )}
-
           {!loading && !generated && (
             <div className="flex h-80 items-center justify-center text-center text-gray-400 dark:text-gray-300">
               <div>
@@ -303,7 +293,6 @@ function TravelPlanner() {
           )}
         </div>
       </div>
-
       {toast.show && (
         <Toast
           message={toast.message}

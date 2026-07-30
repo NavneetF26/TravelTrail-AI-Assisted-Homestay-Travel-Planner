@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import UploadImage from "../components/UploadImage";
 import { Input, Button, Toast, Loader } from "../components/ui";
 
-const API = "http://127.0.0.1:8000/api";
+const API = `${import.meta.env.VITE_API_URL}/api`;
 const AMENITIES = [
   "WiFi",
   "Parking",
@@ -25,7 +25,7 @@ const ROOM_F = [
   { k: "price", l: "Room Price", t: "number" },
   { k: "capacity", l: "Capacity", t: "number" },
   { k: "beds", l: "Beds" },
-  { k: "size", l: "Room Size" },
+  { k: "size", l: "Room Size (e.g. 250)", t: "number" },
 ];
 const ATTR_F = [
   { k: "name", l: "Attraction Name" },
@@ -51,6 +51,12 @@ const EMPTY_FORM = {
   nearby_attractions: [EMPTY_ATTR],
   rooms: [{ id: 1, ...EMPTY_ROOM }],
 };
+const sqFt = (v, add) => {
+  const num = String(v || "")
+    .replace(/\s*sq\.?\s*ft\.?$/i, "")
+    .trim();
+  return add ? (num ? `${num} sq.ft` : num) : num;
+};
 
 function ListEditor({
   items,
@@ -74,7 +80,7 @@ function ListEditor({
 
   return (
     <div>
-      <div className="mb-3 flex items-center justify-between">
+      <div className="mb-4 flex items-center justify-between">
         <h2 className="text-xl font-semibold text-teal-800 dark:text-teal-300">
           {label}
         </h2>
@@ -84,53 +90,55 @@ function ListEditor({
           </Button>
         )}
       </div>
-      {items.map((it, i) => (
-        <div
-          key={it.id ?? i}
-          className="mb-5 space-y-3 rounded-lg border border-gray-300 dark:border-slate-600 dark:bg-slate-800 p-4"
-        >
-          <div className={wide ? "grid gap-4 md:grid-cols-2" : ""}>
-            {fields.map((f) => (
-              <Input
-                key={f.k}
-                type={f.t}
-                placeholder={f.l}
-                value={it[f.k]}
-                error={errors[i]?.[f.k]}
-                onChange={(e) => upd(i, f.k, e.target.value)}
+      <div className="space-y-5">
+        {items.map((it, i) => (
+          <div
+            key={it.id ?? i}
+            className="space-y-4 rounded-lg border border-gray-300 dark:border-slate-600 dark:bg-slate-800 p-5"
+          >
+            <div className="grid gap-4 sm:grid-cols-2">
+              {fields.map((f) => (
+                <Input
+                  key={f.k}
+                  type={f.t}
+                  placeholder={f.l}
+                  value={f.k === "size" ? sqFt(it[f.k]) : it[f.k]}
+                  error={errors[i]?.[f.k]}
+                  onChange={(e) => upd(i, f.k, e.target.value)}
+                />
+              ))}
+            </div>
+            <UploadImage
+              onUpload={(url) => upd(i, "image", url)}
+              onError={(m) => notify(m, "error")}
+            />
+            {it.image && (
+              <img
+                src={it.image}
+                alt=""
+                className={`w-full rounded-lg object-cover ${wide ? "h-40" : "h-32"}`}
               />
-            ))}
+            )}
+            {errors[i]?.image && (
+              <p className="text-sm text-red-700 dark:text-red-400">
+                {errors[i].image}
+              </p>
+            )}
+            {wide && (
+              <Input
+                placeholder="Features (WiFi, TV, Balcony)"
+                value={it.features}
+                onChange={(e) => upd(i, "features", e.target.value)}
+              />
+            )}
+            {items.length > 1 && (
+              <Button variant="danger" size="sm" onClick={() => rm(i)}>
+                Remove
+              </Button>
+            )}
           </div>
-          <UploadImage
-            onUpload={(url) => upd(i, "image", url)}
-            onError={(m) => notify(m, "error")}
-          />
-          {it.image && (
-            <img
-              src={it.image}
-              alt=""
-              className={`w-full rounded-lg object-cover ${wide ? "h-40" : "h-32"}`}
-            />
-          )}
-          {errors[i]?.image && (
-            <p className="text-sm text-red-700 dark:text-red-400">
-              {errors[i].image}
-            </p>
-          )}
-          {wide && (
-            <Input
-              placeholder="Features (WiFi, TV, Balcony)"
-              value={it.features}
-              onChange={(e) => upd(i, "features", e.target.value)}
-            />
-          )}
-          {items.length > 1 && (
-            <Button variant="danger" size="sm" onClick={() => rm(i)}>
-              Remove
-            </Button>
-          )}
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
@@ -146,7 +154,7 @@ export default function ManageHomestay() {
   const [toast, setToast] = useState(null);
   const notify = (message, variant = "success") =>
     setToast({ message, variant });
-
+  const set = (patch) => setForm((f) => ({ ...f, ...patch }));
   useEffect(() => {
     if (!id) return;
     (async () => {
@@ -169,32 +177,38 @@ export default function ManageHomestay() {
       }
     })();
   }, [id]);
-
-  const change = (f) => (e) => setForm({ ...form, [f]: e.target.value });
+  const change = (f) => (e) => set({ [f]: e.target.value });
   const updImg = (i, url) =>
-    setForm({
-      ...form,
-      images: form.images.map((im, idx) => (idx === i ? url : im)),
-    });
+    set({ images: form.images.map((im, idx) => (idx === i ? url : im)) });
   const toggleAmenity = (a) =>
-    setForm({
-      ...form,
+    set({
       amenities: form.amenities.includes(a)
         ? form.amenities.filter((x) => x !== a)
         : [...form.amenities, a],
     });
-
-  const validateList = (items, fields) =>
-    items.map((it) => {
-      const e = {};
-      fields.forEach((f) => {
-        if (!String(it[f.k]).trim()) e[f.k] = "Required";
-      });
-      if (!it.image) e.image = "Image required";
-      return e;
-    });
-
   function validate() {
+    const listErrors = (items, fields) =>
+      items.map((it) => {
+        const e = {};
+        fields.forEach((f) => {
+          if (!String(it[f.k]).trim()) e[f.k] = "Required";
+        });
+        if (!it.image) e.image = "Image required";
+        return e;
+      });
+    const basicMissing =
+      !form.name.trim() ||
+      !form.location.trim() ||
+      !form.price ||
+      !form.description.trim() ||
+      !form.images.some(Boolean) ||
+      !form.amenities.length;
+    const rooms = listErrors(form.rooms, ROOM_F);
+    const attractions = listErrors(form.nearby_attractions, ATTR_F);
+    const bad =
+      basicMissing ||
+      rooms.some((r) => Object.keys(r).length) ||
+      attractions.some((a) => Object.keys(a).length);
     const err = {
       name: !form.name.trim() && "Required",
       location: !form.location.trim() && "Required",
@@ -202,20 +216,9 @@ export default function ManageHomestay() {
       description: !form.description.trim() && "Required",
       images: !form.images.some(Boolean) && "Add at least one image",
       amenities: !form.amenities.length && "Select at least one amenity",
-      rooms: validateList(form.rooms, ROOM_F),
-      attractions: validateList(form.nearby_attractions, ATTR_F),
+      rooms,
+      attractions,
     };
-    const bad =
-      [
-        err.name,
-        err.location,
-        err.price,
-        err.description,
-        err.images,
-        err.amenities,
-      ].some(Boolean) ||
-      err.rooms.some((r) => Object.keys(r).length) ||
-      err.attractions.some((a) => Object.keys(a).length);
     return { err, bad };
   }
 
@@ -235,6 +238,7 @@ export default function ManageHomestay() {
           ...r,
           price: Number(r.price),
           capacity: Number(r.capacity),
+          size: sqFt(r.size, true),
           features: r.features
             .split(",")
             .map((x) => x.trim())
@@ -266,42 +270,46 @@ export default function ManageHomestay() {
   if (loading) return <Loader text="Loading..." />;
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-10">
-      <h1 className="mb-8 text-3xl font-bold text-teal-800 dark:text-teal-300">
+    <div className="mx-auto max-w-5xl px-6 py-10">
+      <h1 className="mb-8 px-6 text-3xl font-bold text-teal-800 dark:text-teal-300 md:px-10">
         {id ? "Edit Homestay" : "Add Homestay"}
       </h1>
-      <div className="space-y-8">
-        {BASIC.map((f) => (
-          <Input
-            key={f.k}
-            type={f.t}
-            placeholder={f.l}
-            value={form[f.k]}
-            error={errors[f.k]}
-            onChange={change(f.k)}
-          />
-        ))}
-        <div>
-          <textarea
-            rows="5"
-            placeholder="Description"
-            value={form.description}
-            onChange={change("description")}
-            className="w-full rounded-lg border border-gray-400 bg-white p-3 text-gray-900 outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-300"
-          />
-          {errors.description && (
-            <p className="text-sm text-red-700 dark:text-red-400">
-              {errors.description}
-            </p>
-          )}
+      <div className="rounded-2xl bg-white dark:bg-slate-900 shadow p-6 md:p-10 space-y-10">
+        <div className="space-y-4 rounded-lg border bg- border-gray-300 p-5 dark:border-slate-600  dark:bg-slate-800">
+          <div className="grid gap-5 md:grid-cols-3">
+            {BASIC.map((f) => (
+              <Input
+                key={f.k}
+                type={f.t}
+                placeholder={f.l}
+                value={form[f.k]}
+                error={errors[f.k]}
+                onChange={change(f.k)}
+              />
+            ))}
+          </div>
+          <div>
+            <textarea
+              rows="5"
+              placeholder="Description"
+              value={form.description}
+              onChange={change("description")}
+              className="w-full rounded-lg border border-gray-400 bg-white p-3 text-gray-900 outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-300"
+            />
+            {errors.description && (
+              <p className="text-sm text-red-700 dark:text-red-400">
+                {errors.description}
+              </p>
+            )}
+          </div>
         </div>
         <div>
-          <h2 className="mb-3 text-xl font-semibold text-teal-800 dark:text-teal-300">
+          <h2 className="mb-4 text-xl font-semibold text-teal-800 dark:text-teal-300">
             Homestay Images
           </h2>
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {form.images.map((img, i) => (
-              <div key={i}>
+              <div key={i} className="min-w-0 space-y-2">
                 <UploadImage
                   onUpload={(url) => updImg(i, url)}
                   onError={(m) => notify(m, "error")}
@@ -310,23 +318,23 @@ export default function ManageHomestay() {
                   <img
                     src={img}
                     alt=""
-                    className="mt-2 h-36 w-full rounded-lg object-cover"
+                    className="h-36 w-full rounded-lg object-cover"
                   />
                 )}
               </div>
             ))}
           </div>
           {errors.images && (
-            <p className="text-sm text-red-700 dark:text-red-400 mt-1">
+            <p className="text-sm text-red-700 dark:text-red-400 mt-2">
               {errors.images}
             </p>
           )}
         </div>
         <div>
-          <h2 className="mb-3 text-xl font-semibold text-teal-800 dark:text-teal-300">
+          <h2 className="mb-4 text-xl font-semibold text-teal-800 dark:text-teal-300">
             Amenities
           </h2>
-          <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
             {AMENITIES.map((item) => (
               <label
                 key={item}
@@ -343,7 +351,7 @@ export default function ManageHomestay() {
             ))}
           </div>
           {errors.amenities && (
-            <p className="text-sm text-red-700 dark:text-red-400 mt-1">
+            <p className="text-sm text-red-700 dark:text-red-400 mt-2">
               {errors.amenities}
             </p>
           )}
@@ -355,9 +363,7 @@ export default function ManageHomestay() {
           max={3}
           label="Nearby Attractions"
           notify={notify}
-          onChange={(nearby_attractions) =>
-            setForm({ ...form, nearby_attractions })
-          }
+          onChange={(nearby_attractions) => set({ nearby_attractions })}
         />
         <ListEditor
           items={form.rooms}
@@ -367,9 +373,13 @@ export default function ManageHomestay() {
           label="Rooms"
           wide
           notify={notify}
-          onChange={(rooms) => setForm({ ...form, rooms })}
+          onChange={(rooms) => set({ rooms })}
         />
-        <Button disabled={saving} onClick={handleSubmit}>
+        <Button
+          disabled={saving}
+          onClick={handleSubmit}
+          className="w-full md:w-auto"
+        >
           {saving ? "Saving..." : id ? "Update Homestay" : "Create Homestay"}
         </Button>
       </div>

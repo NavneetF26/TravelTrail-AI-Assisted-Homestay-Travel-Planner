@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { Input, Button, Toast } from "../components/ui";
 import { useAuth } from "../context/AuthContext";
 
-const API_URL = "http://127.0.0.1:8000";
+const API_URL = import.meta.env.VITE_API_URL;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function Login() {
@@ -58,7 +58,7 @@ function Login() {
   };
 
   const loginWithGoogle = () => {
-    window.location.href = "http://127.0.0.1:8000/api/auth/google/login";
+    window.location.href = `${API_URL}/api/auth/google/login`;
   };
 
   return (

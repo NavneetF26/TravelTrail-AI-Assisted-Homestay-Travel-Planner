@@ -34,7 +34,6 @@ function CustomSelect({ label, placeholder, options, value, onChange }) {
           className={`transition ${isOpen ? "rotate-180" : ""}`}
         />
       </button>
-
       {isOpen && (
         <div className="absolute left-0 top-full z-30 mt-1 max-h-52 w-full overflow-y-auto rounded-lg border border-gray-200 bg-white dark:bg-slate-700 py-1 shadow-lg">
           {["", ...options].map((option) => (
@@ -59,7 +58,6 @@ function Explore() {
   const [loading, setLoading] = useState(true);
   const [searchText, setSearchText] = useState("");
   const [budget, setBudget] = useState("");
-
   const fetchHomestays = async (search = "", bud = "") => {
     try {
       setLoading(true);
@@ -67,8 +65,8 @@ function Explore() {
       if (search) params.append("q", search);
       if (bud) params.append("budget", bud);
       const url = params.toString()
-        ? `http://127.0.0.1:8000/api/homestays/search?${params}`
-        : "http://127.0.0.1:8000/api/homestays/";
+        ? `${import.meta.env.VITE_API_URL}/api/homestays/search?${params}`
+        : `${import.meta.env.VITE_API_URL}/api/homestays/`;
       setHomestays(await (await fetch(url)).json());
     } catch (err) {
       console.error(err);
@@ -76,7 +74,6 @@ function Explore() {
       setLoading(false);
     }
   };
-
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchHomestays();
@@ -99,7 +96,6 @@ function Explore() {
           Search by homestay name or location.
         </p>
       </div>
-
       <div className="relative mb-8">
         <Input
           placeholder="Search by homestay or location (e.g. Mussoorie, Auli, Rishikesh)"
@@ -113,7 +109,6 @@ function Explore() {
           <Search size={20} />
         </button>
       </div>
-
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[220px_1fr]">
         <aside className="h-fit rounded-xl bg-white dark:bg-slate-800 p-5 shadow">
           <h2 className="mb-5 text-lg font-bold text-teal-800 dark:text-teal-200">
@@ -135,7 +130,6 @@ function Explore() {
             </Button>
           </div>
         </aside>
-
         <section>
           <div className="mb-6 flex justify-between">
             <h2 className="text-xl font-semibold text-teal-800 dark:text-teal-300">
@@ -145,7 +139,6 @@ function Explore() {
               {homestays.length} Results Found
             </span>
           </div>
-
           {loading ? (
             <div className="flex justify-center py-12">
               <Loader text="Loading homestays..." />

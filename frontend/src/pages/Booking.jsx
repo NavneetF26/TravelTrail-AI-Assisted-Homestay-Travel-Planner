@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { Input, Button, Toast, Loader } from "../components/ui";
 
-const API = "http://127.0.0.1:8000/api";
+const API = `${import.meta.env.VITE_API_URL}/api`;
 const FIELD_GROUPS = [
   [
     {
@@ -75,7 +75,6 @@ function Booking() {
         full_name: user?.name || "",
         email: user?.email || "",
       };
-
       if (editMode) {
         const res = await fetch(`${API}/bookings/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
@@ -85,7 +84,6 @@ function Booking() {
         prefill = await res.json();
         homestayId = prefill.homestay_id;
       }
-
       const home = await (await fetch(`${API}/homestays/${homestayId}`)).json();
       setHomestay(home);
       setForm((p) => ({
@@ -252,7 +250,6 @@ function Booking() {
           </div>
         </div>
       </div>
-
       {toast.show && (
         <Toast
           message={toast.message}

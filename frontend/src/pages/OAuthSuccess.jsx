@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Loader, Toast } from "../components/ui";
 import { useAuth } from "../context/AuthContext";
 
-const API = "http://127.0.0.1:8000/api";
+const API = `${import.meta.env.VITE_API_URL}/api`;
 
 function OAuthSuccess() {
   const navigate = useNavigate();
@@ -22,7 +22,6 @@ function OAuthSuccess() {
         setTimeout(() => navigate("/login"), 1500);
       };
       if (!token) return fail("Google login failed.");
-
       try {
         const res = await fetch(`${API}/auth/me`, {
           headers: { Authorization: `Bearer ${token}` },

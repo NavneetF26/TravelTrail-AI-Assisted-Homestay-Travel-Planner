@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Input, Button, Toast } from "../components/ui";
 
-const API_URL = "http://127.0.0.1:8000";
+const API_URL = import.meta.env.VITE_API_URL;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PASSWORD_RE =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&^#()_\-+=])[A-Za-z\d@$!%*?&^#()_\-+=]{8,}$/;
@@ -19,12 +19,10 @@ function Register() {
     message: "",
   });
   const navigate = useNavigate();
-
   const setField = (key, setter) => (e) => {
     setter(e.target.value);
     if (errors[key]) setErrors((p) => ({ ...p, [key]: "" }));
   };
-
   const validateForm = () => {
     const e = { name: "", email: "", password: "" };
     if (!name.trim()) e.name = "Name is required.";
@@ -40,7 +38,6 @@ function Register() {
     setErrors(e);
     return !e.name && !e.email && !e.password;
   };
-
   const handleRegister = async () => {
     if (!validateForm()) return;
     try {
@@ -78,7 +75,6 @@ function Register() {
         <p className="text-center text-gray-600 mt-3 mb-8 dark:text-gray-300">
           Register to start booking homestays.
         </p>
-
         <div className="space-y-5">
           <Input
             label="Full Name"
@@ -107,7 +103,6 @@ function Register() {
             {loading ? "Creating Account..." : "Register"}
           </Button>
         </div>
-
         <p className="text-center text-gray-600 mt-6 dark:text-gray-300">
           Already have an account?
           <Link
@@ -119,7 +114,6 @@ function Register() {
           </Link>
         </p>
       </div>
-
       {toast.show && (
         <Toast
           message={toast.message}

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Loader, Modal, Button, Toast } from "../components/ui";
 
-const API = "http://127.0.0.1:8000/api";
+const API = `${import.meta.env.VITE_API_URL}/api`;
 const STATUS_CLASS = {
   Pending: "bg-yellow-100 text-yellow-700",
   Cancelled: "bg-red-100 text-red-700",

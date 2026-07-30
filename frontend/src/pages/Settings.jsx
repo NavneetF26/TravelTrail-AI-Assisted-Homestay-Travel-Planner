@@ -4,7 +4,7 @@ import { Input, Button, Toast, Modal } from "../components/ui";
 import ThemeToggle from "../components/ThemeToggle";
 import { useAuth } from "../context/AuthContext";
 
-const API = "http://127.0.0.1:8000/api";
+const API = `${import.meta.env.VITE_API_URL}/api`;
 const PASSWORD_RE =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&^#()_\-+=])[A-Za-z\d@$!%*?&^#()_\-+=]{8,}$/;
 
@@ -13,7 +13,6 @@ function Settings() {
   const { logout, updateUser } = useAuth();
   const token = localStorage.getItem("token");
   const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
-
   const [name, setName] = useState(storedUser.name || "");
   const [email] = useState(storedUser.email || "");
   const [currentPassword, setCurrentPassword] = useState("");
@@ -91,7 +90,6 @@ function Settings() {
       newErrors.confirmPassword = "Passwords do not match.";
     setErrors(newErrors);
     if (Object.keys(newErrors).length) return;
-
     try {
       setSavingPassword(true);
       const result = await authedFetch(`${API}/auth/change-password`, {
@@ -114,7 +112,6 @@ function Settings() {
       setSavingPassword(false);
     }
   };
-
   const handleLogout = () => {
     logout();
     navigate("/login");
@@ -148,7 +145,6 @@ function Settings() {
             Manage your account and preferences.
           </p>
         </div>
-
         <div className="space-y-8">
           <section className="bg-white dark:bg-slate-800 rounded-2xl shadow p-6">
             <h2 className="text-2xl font-semibold text-teal-800 dark:text-teal-300 mb-6">
@@ -169,7 +165,6 @@ function Settings() {
               </div>
             </div>
           </section>
-
           <section className="bg-white dark:bg-slate-800 rounded-2xl shadow p-6">
             <div className="flex justify-between items-center">
               <div>
@@ -220,7 +215,6 @@ function Settings() {
               </div>
             </div>
           </section>
-
           <section className="bg-white dark:bg-slate-800 rounded-2xl shadow p-6">
             <h2 className="text-2xl font-semibold text-teal-800 dark:text-teal-300">
               Account
@@ -250,7 +244,6 @@ function Settings() {
           </section>
         </div>
       </div>
-
       <Modal
         isOpen={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
@@ -265,7 +258,6 @@ function Settings() {
           undone.
         </p>
       </Modal>
-
       {toast.show && (
         <Toast
           message={toast.message}

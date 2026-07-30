@@ -246,8 +246,11 @@ async def google_callback(request: Request):
         }
     )
     return RedirectResponse(
-    url=f"{FRONTEND_URL}/oauth-success?token={jwt_token}"
-)
+        url=(
+            "https://travel-trail-ai-assisted-homestay-travel-planner-g41vv7r2y.vercel.app"
+            f"?token={jwt_token}"
+        )
+    )
 
 @router.post("/logout")
 def logout():

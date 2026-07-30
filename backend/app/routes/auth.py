@@ -1,4 +1,4 @@
-import os,re
+import re
 from fastapi import APIRouter, HTTPException, status, Depends, Request
 from app.utils.rate_limiter import limiter
 from app.database import (
@@ -23,7 +23,6 @@ from fastapi.responses import RedirectResponse
 from app.utils.oauth import oauth
 
 router = APIRouter(
-    FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
     prefix="/api/auth",
     tags=["Authentication"]
 )

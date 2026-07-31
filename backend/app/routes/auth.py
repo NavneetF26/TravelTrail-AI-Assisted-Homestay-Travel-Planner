@@ -8,6 +8,7 @@ from app.database import users_collection, bookings_collection, saved_homestays_
 from app.models.user import UserCreate, UserLogin, UserResponse, UpdateProfile, ChangePassword
 from app.utils.auth import hash_password, verify_password, create_access_token, get_current_user
 from app.utils.oauth import oauth
+from authlib.integrations.base_client.errors import OAuthError
 
 router = APIRouter(prefix="/api/auth", tags=["Authentication"])
 
@@ -115,7 +116,11 @@ async def google_login(request: Request):
 
 @router.get("/google/callback", name="google_callback")
 async def google_callback(request: Request):
-    token = await oauth.google.authorize_access_token(request)
+    try:
+        token = await oauth.google.authorize_access_token(request)
+    except OAuthError:
+        return RedirectResponse(url=f"{FRONTEND_URL}/login")
+
     user_info = token["userinfo"]
     email = user_info["email"]
     name = user_info["name"]

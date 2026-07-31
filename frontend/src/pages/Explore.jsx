@@ -98,7 +98,12 @@ function Explore() {
       </div>
       <div className="relative mb-8">
         <Input
-          placeholder="Search by homestay or location (e.g. Mussoorie, Auli, Rishikesh)"
+          className="pr-12"
+          placeholder={
+            window.innerWidth < 640
+              ? "Search homestay or location..."
+              : "Search by homestay or location (e.g. Mussoorie, Auli, Rishikesh)"
+          }
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
         />

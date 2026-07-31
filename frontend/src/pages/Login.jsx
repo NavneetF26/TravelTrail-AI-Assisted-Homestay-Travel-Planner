@@ -18,7 +18,6 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
-
   const setField = (key, setter) => (e) => {
     setter(e.target.value);
     if (errors[key]) setErrors((p) => ({ ...p, [key]: "" }));
@@ -70,7 +69,6 @@ function Login() {
         <p className="text-center text-gray-600 mt-3 mb-8 dark:text-gray-300">
           Login to manage bookings and AI travel plans.
         </p>
-
         <div className="space-y-5">
           <Input
             label="Email"
@@ -91,7 +89,6 @@ function Login() {
           <Button size="lg" onClick={handleLogin} disabled={loading}>
             {loading ? "Logging in..." : "Login"}
           </Button>
-
           <div className="relative my-2">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-300 dark:border-slate-600" />
@@ -102,12 +99,10 @@ function Login() {
               </span>
             </div>
           </div>
-
           <Button variant="outline" size="lg" onClick={loginWithGoogle}>
             Continue with Google
           </Button>
         </div>
-
         <p className="text-center text-gray-600 mt-6 dark:text-gray-300">
           Don't have an account?
           <Link

@@ -130,7 +130,7 @@ async def google_callback(request: Request):
     jwt_token = create_access_token(
         {"id": db_user["id"], "email": db_user["email"], "name": db_user["name"]}
     )
-    return RedirectResponse(url=f"{FRONTEND_URL}?token={jwt_token}")
+    return RedirectResponse(url=f"{FRONTEND_URL}/oauth-success?token={jwt_token}")
 
 
 @router.post("/logout")

@@ -2,9 +2,13 @@
 
 An AI-assisted homestay booking and travel planning platform that enables travelers to discover homestays, manage bookings, save favorites, and generate personalized travel itineraries using Google's Gemini AI.
 
+## 🚀 Live Application
+
+👉 **Open TravelTrail:** https://travel-trail-ai-assisted-homestay-t.vercel.app
+
 ---
 
-## Features
+## ✨ Features
 
 - Browse available homestays
 - View detailed homestay information
@@ -12,7 +16,7 @@ An AI-assisted homestay booking and travel planning platform that enables travel
 - View available rooms and amenities
 - Create, update, view, and delete bookings
 - Save and manage favorite homestays
-- User Authentication (Register/Login & Google Sign-In)
+- User Authentication (JWT & Google OAuth)
 - AI-powered Travel Planner using Google Gemini
 - Personalized day-wise travel itineraries
 - Budget-aware travel recommendations
@@ -20,30 +24,41 @@ An AI-assisted homestay booking and travel planning platform that enables travel
 
 ---
 
-## Tech Stack
+## 🛠️ Tech Stack
 
 ### Frontend
 
-- React.js
+- React.js (Vite)
 - Tailwind CSS
 - Fetch API
+- React Router
+- Lucide React Icons
 
 ### Backend
 
 - FastAPI (Python)
 - Uvicorn
-- Google Gemini API
 - Python-dotenv
 - CORS Middleware
+- JWT Authentication
+- Google OAuth
+- Google Gemini API (AI Travel Planner)
 
 ### Database
 
 - MongoDB Atlas
 - PyMongo
 
+### Deployment
+
+- Frontend: Vercel
+- Backend: Render
+- Database: MongoDB Atlas
+- AI: Google Gemini API
+
 ---
 
-## AI Integration
+## 🤖 AI Integration
 
 TravelTrail integrates Google's Gemini API to generate personalized travel itineraries.
 
@@ -55,11 +70,11 @@ The AI Travel Planner allows users to:
 - Select travel interests
 - Add optional travel preferences
 
-The backend securely communicates with the Google Gemini API using an API key stored in environment variables. The AI-generated response is validated before being returned to the frontend, where it is displayed as a personalized day-wise travel itinerary.
+The backend securely communicates with Google's Gemini API using environment variables to protect sensitive credentials. The AI-generated response is validated before being returned to the frontend, where it is displayed as a personalized day-wise travel itinerary.
 
 ---
 
-## Frontend Setup (Run Locally)
+## 💻 Frontend Setup (Run Locally)
 
 ```bash
 cd frontend
@@ -73,7 +88,7 @@ Frontend will be running at:
 
 ---
 
-## Backend Setup (Run Locally)
+## ⚙️ Backend Setup (Run Locally)
 
 **Step 1 — Create a virtual environment**
 
@@ -121,36 +136,36 @@ Backend will be running at:
 
 ---
 
-## Database
+## 🗄️ Database
 
 TravelTrail uses **MongoDB Atlas** as its primary database.
 
 MongoDB was chosen because it stores data as flexible JSON-like documents, making it ideal for the project's nested structure where each homestay contains rooms, amenities, images, and nearby attractions inside a single document.
 
-The application currently uses the following collections:
+The application uses the following collections:
 
-- **users**
-- **homestays**
-- **bookings**
-- **saved_homestays**
+- **users** – Stores user profile information and authentication details.
+- **homestays** – Stores homestay details, rooms, amenities, images, and nearby attractions.
+- **bookings** – Stores booking details, guest information, travel dates, and booking status.
+- **saved_homestays** – Stores users' saved or favorite homestays for quick access.
 
 ---
 
-## Database Schema
+## 📊 Database Schema
 
 ![Database Schema](docs/schema.png)
 
 ---
 
-## Database Setup
+## 🔧 Database Setup
 
-## 1. Create a MongoDB Atlas Cluster
+### Step 1: Create a MongoDB Atlas Cluster
 
 Create a free MongoDB Atlas cluster and obtain your connection string.
 
 ---
 
-## 2. Configure Environment Variables
+### Step 2: Configure Environment Variables
 
 Create a `.env` file inside the `backend` folder.
 
@@ -174,19 +189,37 @@ SESSION_SECRET=your_session_secret
 
 # Google Gemini AI
 GEMINI_API_KEY=your_gemini_api_key
+
+# Vercel URL
+FRONTEND_URL=your_frontend_url_here
 ```
 
 A sample configuration is also provided in `.env.example`.
 
 ---
 
-## Database Collections
+## 🌐 Live Deployment
 
-The project currently contains the following MongoDB collections:
+### Live Frontend
 
-- **users** – Stores user profile information and authentication details.
-- **homestays** – Stores homestay details, rooms, amenities, images, and nearby attractions.
-- **bookings** – Stores booking details, guest information, travel dates, and booking status.
-- **saved_homestays** – Stores users' saved or favorite homestays for quick access.
+**Vercel:**
+https://travel-trail-ai-assisted-homestay-t.vercel.app
+
+### Live Backend
+
+**Render:**
+https://traveltrail-api.onrender.com
 
 ---
+
+## ⚠️ Known Limitations (Free Tier)
+
+- The backend is hosted on **Render's free tier**, which automatically spins down after a period of inactivity.
+- The first request after the backend has been idle may take **30–60 seconds** while the server wakes up.
+- Once awake, the application performs normally.
+
+---
+
+## 📄 License
+
+This project was developed for academic and internship purposes.

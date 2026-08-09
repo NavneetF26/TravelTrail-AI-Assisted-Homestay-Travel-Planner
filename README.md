@@ -1,10 +1,31 @@
 # TravelTrail: AI-Assisted Homestay & Travel Planner
 
-An AI-assisted homestay booking and travel planning platform that enables travelers to discover homestays, manage bookings, save favorites, and generate personalized travel itineraries using Google's Gemini AI.
+An AI-assisted homestay booking and travel planning platform that enables travelers to discover homestays, manage bookings, save favorites, and generate personalized travel plans using Google's Gemini AI.
 
 ## 🚀 Live Application
 
-👉 **Open TravelTrail:** https://travel-trail-ai-assisted-homestay-t.vercel.app
+👉 **Open TravelTrail:**  
+https://travel-trail-ai-assisted-homestay-t.vercel.app
+
+---
+
+## 📸 Screenshots
+
+### Home Page
+
+![TravelTrail Home Page](docs/home.png)
+
+### Explore Page
+
+![Explore](docs/explore.png)
+
+### User Dashboard
+
+![User Dashboard](docs/dashboard.png)
+
+### AI Travel Planner
+
+![AI Travel Planner](docs/planner.png)
 
 ---
 
@@ -16,9 +37,10 @@ An AI-assisted homestay booking and travel planning platform that enables travel
 - View available rooms and amenities
 - Create, update, view, and delete bookings
 - Save and manage favorite homestays
-- User Authentication (JWT & Google OAuth)
+- Manage homestay listings through create, update, and delete operations
+- User authentication using JWT and Google OAuth
 - AI-powered Travel Planner using Google Gemini
-- Personalized day-wise travel itineraries
+- Personalized day-wise travel plans
 - Budget-aware travel recommendations
 - Personalized user dashboard
 
@@ -42,12 +64,15 @@ An AI-assisted homestay booking and travel planning platform that enables travel
 - CORS Middleware
 - JWT Authentication
 - Google OAuth
-- Google Gemini API (AI Travel Planner)
 
 ### Database
 
 - MongoDB Atlas
 - PyMongo
+
+### AI
+
+- Google Gemini API
 
 ### Deployment
 
@@ -60,7 +85,7 @@ An AI-assisted homestay booking and travel planning platform that enables travel
 
 ## 🤖 AI Integration
 
-TravelTrail integrates Google's Gemini API to generate personalized travel itineraries.
+TravelTrail integrates Google's Gemini API to generate personalized travel plans.
 
 The AI Travel Planner allows users to:
 
@@ -70,69 +95,131 @@ The AI Travel Planner allows users to:
 - Select travel interests
 - Add optional travel preferences
 
-The backend securely communicates with Google's Gemini API using environment variables to protect sensitive credentials. The AI-generated response is validated before being returned to the frontend, where it is displayed as a personalized day-wise travel itinerary.
+The backend securely communicates with Google's Gemini API using environment variables to protect sensitive credentials. The AI-generated response is validated before being returned to the frontend, where it is displayed as a personalized day-wise travel plan.
 
 ---
 
-## 💻 Frontend Setup (Run Locally)
+## ⚙️ Setup Instructions
+
+### 1. Clone the Repository
 
 ```bash
-cd frontend
-npm install
-npm run dev
+git clone https://github.com/NavneetF26/TravelTrail-AI-Assisted-Homestay-Travel-Planner.git
+cd TravelTrail-AI-Assisted-Homestay-Travel-Planner
 ```
 
-Frontend will be running at:
+### 2. Set Up MongoDB Atlas
 
-`http://localhost:5173`
+TravelTrail uses MongoDB Atlas as its database.
 
----
+1. Create a MongoDB Atlas cluster.
+2. Create a database user.
+3. Allow your IP address to access the cluster.
+4. Copy the MongoDB connection string.
+5. Use the connection string as the value of `MONGO_URI` in the backend `.env` file.
 
-## ⚙️ Backend Setup (Run Locally)
+### 3. Backend Setup
 
-**Step 1 — Create a virtual environment**
+Navigate to the backend directory:
+
+```bash
+cd backend
+```
+
+Create a virtual environment:
 
 ```bash
 python -m venv venv
 ```
 
-**Step 2 — Activate the environment**
+Activate the virtual environment.
 
-On Windows:
+**Windows:**
 
 ```bash
 venv\Scripts\activate
 ```
 
-On macOS/Linux:
+**macOS/Linux:**
 
 ```bash
 source venv/bin/activate
 ```
 
-**Step 3 — Install dependencies**
+Install the required dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-**Step 4 — Set up environment variables**
+### 4. Configure Environment Variables
 
-Copy the example env file and fill in your values:
+Create a `.env` file inside the `backend` folder using `.env.example` as a reference.
 
-```bash
-cp .env.example .env
+```env
+MONGO_URI=your_mongodb_connection_string
+
+JWT_SECRET=your_secret_key
+JWT_ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_DAYS=7
+
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+
+SESSION_SECRET=your_session_secret
+
+GEMINI_API_KEY=your_gemini_api_key
+
+FRONTEND_URL=http://localhost:5173
 ```
 
-**Step 5 — Run the backend server**
+Do not commit the `.env` file to the repository.
+
+Start the backend server:
 
 ```bash
 uvicorn app.main:app --reload
 ```
 
-Backend will be running at:
+The backend will run at:
 
-`http://localhost:8000`
+```text
+http://localhost:8000
+```
+
+### 5. Frontend Setup
+
+Open a new terminal and navigate to the frontend directory:
+
+```bash
+cd frontend
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+The frontend will run at:
+
+```text
+http://localhost:5173
+```
+
+### 6. API Documentation
+
+Once the backend is running, interactive Swagger API documentation is available at:
+
+```text
+http://localhost:8000/docs
+```
 
 ---
 
@@ -140,83 +227,240 @@ Backend will be running at:
 
 TravelTrail uses **MongoDB Atlas** as its primary database.
 
-MongoDB was chosen because it stores data as flexible JSON-like documents, making it ideal for the project's nested structure where each homestay contains rooms, amenities, images, and nearby attractions inside a single document.
+MongoDB was chosen because its document-based structure works well with the project's nested data, such as rooms, amenities, images, and nearby attractions.
 
-The application uses the following collections:
+### Collections
 
 - **users** – Stores user profile information and authentication details.
 - **homestays** – Stores homestay details, rooms, amenities, images, and nearby attractions.
 - **bookings** – Stores booking details, guest information, travel dates, and booking status.
-- **saved_homestays** – Stores users' saved or favorite homestays for quick access.
+- **saved_homestays** – Stores users' saved or favorite homestays.
 
 ---
 
 ## 📊 Database Schema
 
-![Database Schema](docs/schema.png)
+![TravelTrail Database Schema](docs/schema.png)
 
 ---
 
-## 🔧 Database Setup
+## 📡 API Documentation
 
-### Step 1: Create a MongoDB Atlas Cluster
+TravelTrail's backend is built with FastAPI.
 
-Create a free MongoDB Atlas cluster and obtain your connection string.
+When running locally, interactive Swagger API documentation is available at:
 
----
-
-### Step 2: Configure Environment Variables
-
-Create a `.env` file inside the `backend` folder.
-
-Example:
-
-```env
-# MongoDB
-MONGO_URI=mongodb+srv://<username>:<password>@<cluster-name>.mongodb.net/?retryWrites=true&w=majority&appName=<app-name>
-
-# JWT Authentication
-JWT_SECRET=your_secret_key
-JWT_ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_DAYS=7
-
-# Google OAuth
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-
-# Session
-SESSION_SECRET=your_session_secret
-
-# Google Gemini AI
-GEMINI_API_KEY=your_gemini_api_key
-
-# Vercel URL
-FRONTEND_URL=your_frontend_url_here
+```text
+http://localhost:8000/docs
 ```
 
-A sample configuration is also provided in `.env.example`.
+### Homestays
+
+| Method | Endpoint                       | Description             |
+| ------ | ------------------------------ | ----------------------- |
+| GET    | `/api/homestays/`              | Get available homestays |
+| POST   | `/api/homestays/`              | Create a homestay       |
+| GET    | `/api/homestays/search`        | Search homestays        |
+| GET    | `/api/homestays/{homestay_id}` | Get a specific homestay |
+| PUT    | `/api/homestays/{homestay_id}` | Update a homestay       |
+| DELETE | `/api/homestays/{homestay_id}` | Delete a homestay       |
+
+### Bookings
+
+| Method | Endpoint                     | Description            |
+| ------ | ---------------------------- | ---------------------- |
+| GET    | `/api/bookings/`             | Get bookings           |
+| POST   | `/api/bookings/`             | Create a booking       |
+| GET    | `/api/bookings/{booking_id}` | Get a specific booking |
+| PUT    | `/api/bookings/{booking_id}` | Update a booking       |
+| DELETE | `/api/bookings/{booking_id}` | Delete a booking       |
+
+### Saved Homestays
+
+| Method | Endpoint                   | Description             |
+| ------ | -------------------------- | ----------------------- |
+| POST   | `/api/saved/{homestay_id}` | Save a homestay         |
+| DELETE | `/api/saved/{homestay_id}` | Remove a saved homestay |
+| GET    | `/api/saved/`              | Get saved homestays     |
+
+### AI Planner
+
+| Method | Endpoint              | Description                            |
+| ------ | --------------------- | -------------------------------------- |
+| POST   | `/api/ai/travel-plan` | Generate a personalized AI travel plan |
+
+### Authentication
+
+| Method | Endpoint                    | Description                  |
+| ------ | --------------------------- | ---------------------------- |
+| POST   | `/api/auth/register`        | Register a new user          |
+| POST   | `/api/auth/login`           | Log in a user                |
+| GET    | `/api/auth/google/login`    | Start Google OAuth login     |
+| GET    | `/api/auth/google/callback` | Handle Google OAuth callback |
+| POST   | `/api/auth/logout`          | Log out the current user     |
+
+### API Examples
+
+#### Create Booking
+
+**Request**
+
+```http
+POST /api/bookings/
+```
+
+**Request Body**
+
+```json
+{
+  "homestay_id": 1,
+  "room_id": 1,
+  "full_name": "Test User",
+  "email": "test@example.com",
+  "check_in": "2026-08-15",
+  "check_out": "2026-08-17",
+  "guests": 2,
+  "phone": "9876543210"
+}
+```
+
+**Response**
+
+```json
+{
+  "message": "Booking created successfully",
+  "booking": {
+    "homestay_id": 1,
+    "room_id": 1,
+    "full_name": "Test User",
+    "email": "test@example.com",
+    "check_in": "2026-08-15",
+    "check_out": "2026-08-17",
+    "guests": 2,
+    "status": "Pending"
+  }
+}
+```
+
+#### Generate AI Travel Plan
+
+**Request**
+
+```http
+POST /api/ai/travel-plan
+```
+
+**Request Body**
+
+```json
+{
+  "destination": "Mussoorie",
+  "budget": "10000",
+  "duration": "3 days",
+  "interests": "nature, sightseeing",
+  "preferences": "prefer peaceful places"
+}
+```
+
+**Response**
+
+```json
+{
+  "days": [
+    {
+      "day": "Day 1",
+      "title": "Arrival and Local Exploration",
+      "activities": ["Explore Mall Road", "Visit Landour", "Try local food"]
+    }
+  ]
+}
+```
+
+> The AI-generated travel plan varies depending on the user's input.
 
 ---
 
-## 🌐 Live Deployment
+## 🏗️ Architecture / Folder Structure
 
-### Live Frontend
+TravelTrail uses a separate frontend and backend architecture.
 
-**Vercel:**
-https://travel-trail-ai-assisted-homestay-t.vercel.app
+- **Frontend:** React.js application responsible for the user interface, routing, authentication state, and communication with backend APIs.
+- **Backend:** FastAPI application responsible for REST APIs, authentication, business logic, and Gemini AI integration.
+- **Database:** MongoDB Atlas stores users, homestays, bookings, and saved homestays.
+- **AI:** Google Gemini API generates personalized travel plans.
 
-### Live Backend
+### Project Structure
 
-**Render:**
-https://traveltrail-api.onrender.com
+```text
+TravelTrail-AI/
+│
+├── backend/
+│   ├── app/
+│   │   ├── models/
+│   │   │   ├── booking.py
+│   │   │   ├── homestay.py
+│   │   │   └── user.py
+│   │   │
+│   │   ├── routes/
+│   │   │   ├── auth.py
+│   │   │   ├── bookings.py
+│   │   │   ├── homestays.py
+│   │   │   ├── planner.py
+│   │   │   └── saved.py
+│   │   │
+│   │   ├── utils/
+│   │   │   ├── auth.py
+│   │   │   ├── error_handler.py
+│   │   │   ├── oauth.py
+│   │   │   └── rate_limiter.py
+│   │   │
+│   │   ├── database.py
+│   │   └── main.py
+│   │
+│   ├── .env.example
+│   └── requirements.txt
+│
+├── frontend/
+│   ├── src/
+│   │   ├── assets/
+│   │   ├── components/
+│   │   │   └── ui/
+│   │   ├── context/
+│   │   ├── pages/
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│   │
+│   ├── .env.example
+│
+├── docs/
+│   ├── schema.png
+│   ├── home.png
+│   ├── details.png
+│   ├── dashboard.png
+│   └── planner.png
+│
+├── .gitignore
+├── PROMPTS.md
+└── README.md
+```
 
 ---
 
-## ⚠️ Known Limitations (Free Tier)
+## ⚠️ Known Limitations
 
 - The backend is hosted on **Render's free tier**, which automatically spins down after a period of inactivity.
-- The first request after the backend has been idle may take **30–60 seconds** while the server wakes up.
+- The first request after the backend has been idle may take approximately **30–60 seconds** while the server wakes up.
 - Once awake, the application performs normally.
+- Google Gemini API usage is subject to the limits of the configured API plan.
+- The application is developed as an academic and internship project and is not intended for production-scale traffic.
+
+---
+
+## 🙏 Credits & Acknowledgements
+
+- **Google Gemini API** – Used to generate personalized AI-powered travel plans.
+- **React.js, FastAPI, MongoDB, Vercel, and Render documentation** – Used as technical references during development.
+- **ChatGPT** – Used as a development assistance tool for debugging, implementation guidance, and documentation support.
 
 ---
 
